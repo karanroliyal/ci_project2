@@ -1,0 +1,80 @@
+.main-container-of-app {
+
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    .navigation-wrapper {
+        margin-right: 0px !important;
+        margin-left: 0px !important;
+        height: 45px;
+        padding: 5px;
+        box-shadow: 0px 3px 5px 0px rgba(56, 56, 56, 0.25);
+        -webkit-box-shadow: 0px 3px 5px -1px rgba(56, 56, 56, 0.25);
+        -moz-box-shadow: 0px 3px 5px -1px rgba(56, 56, 56, 0.25);
+
+        position: relative;
+
+        .navigation-container{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-toggle-btn{
+            font-size: 20px;
+        }
+        .user-name-navigation{
+            margin-bottom: 0px;
+            white-space: nowrap;
+        }
+        .user-profile-navigation{
+            width: 35px; 
+            height: 35px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+    }
+
+    .sidebar-content-wrapper {
+
+        position: relative;
+        height: calc(100vh - 45px);
+        margin-right: 0px !important;
+        margin-left: 0px !important;
+
+        .content-wrapper {
+            padding: 10px;
+        }
+
+        .sidebar-wrapper {
+            padding: 10px 15px;
+            box-shadow: rgba(0, 0, 0, 0.17) 2.4px 2.4px 3.2px;
+            position: relative;
+            height: 100%;
+
+            .sidebar-btn {
+                position: relative;
+                white-space: nowrap;
+                padding: 7px 14px;
+                text-align: start;
+                background-color: transparent;
+                border-radius: 3px;
+                margin-bottom: 10px;
+                display: block;
+                text-decoration: none;
+                font-weight: 600;
+                color: #2674a5;
+            }
+            .logout-btn-sidebar{
+                margin-top: auto;
+            }
+            .sidebar-btn:hover {
+                background-color: #cdeafc;
+                    color: black;
+            }
+        }
+
+    }
+
+
+}

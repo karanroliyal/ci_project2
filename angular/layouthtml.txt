@@ -1,0 +1,49 @@
+<div class="main-container-of-app">
+
+  <div class="navigation-wrapper row">
+
+    <div class="logo-wrapper col-md-2 col-xl-2 col-sm-2">
+      <img width="100%" src="../assets/images/logo.png">
+    </div>
+    <div class="col-md-10 col-xl-10 col-sm-10 navigation-container">
+      <i class="bi bi-list toggle-sidebar-btn sidebar-toggle-btn"></i>
+      <div class="d-flex align-items-center gap-2">
+
+        <h6 class="user-name-navigation px-2">Karan rawat</h6>
+        <img class="user-profile-navigation" src="../assets/images/images.jpg" alt="">
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sidebar-content-wrapper row">
+
+    <div class="sidebar-wrapper col-md-2 col-xl-2 col-sm-2">
+      <div class="d-flex flex-column h-100">
+
+        <div>
+          <a class="sidebar-btn" href=""><i class="bi bi-grid"></i> Dashboard</a>
+          <a class="sidebar-btn" href=""><i class="bi bi-person"></i> User master</a>
+          <a class="sidebar-btn" href=""><i class="bi bi-people"></i> Client master</a>
+          <a class="sidebar-btn" href=""><i class="bi bi-bag-plus"></i> Item master</a>
+          <a class="sidebar-btn" href=""><i class="bi bi-journal-text"></i> Invoice</a>
+        </div>
+
+        <a class="logout-btn-sidebar sidebar-btn bg-danger text-light" href="">
+          <i class="bi bi-box-arrow-in-left"></i> Logout
+        </a>
+
+      </div>
+    </div>
+    <div class="content-wrapper col-md-10 col-xl-10 col-sm-10">
+
+
+hello
+
+    </div>
+
+  </div>
+
+
+</div>

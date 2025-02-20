@@ -1,0 +1,18 @@
+-- users master table 
+create database ciproject;
+
+use ciproject;
+
+create table user_master(
+id int auto_increment,
+name varchar(70) ,
+email varchar(100) ,
+profile varchar(200),
+phone bigint,
+password varchar(18),
+primary key(id)
+);
+
+
+insert into user_master values
+(null , 'karan' , 'karan@gmail.com' , 'profile.png' , 8368145192 , 'karan123');

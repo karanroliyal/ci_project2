@@ -1,0 +1,27 @@
+
+@if(Form()?.get(fieldName())?.touched){
+
+    @if(Form()?.get(fieldName())?.hasError('required')){
+        <small class="text-danger">{{fieldName()}} is required</small>
+    }
+    @else if(Form()?.get(fieldName())?.hasError('minlength')){
+        <small class="text-danger">{{fieldName()}} has {{minLength()}} length</small>
+    }
+    @else if(Form()?.get(fieldName())?.hasError('maxlength')){
+        <small class="text-danger">{{fieldName()}} has {{maxLength()}} length</small>
+    }
+    @else if(Form()?.get(fieldName())?.hasError('pattern')){
+        <small class="text-danger">{{fieldName()}} is invalid</small>
+    }
+    @else if (Form()?.get(fieldName())?.hasError('email')) {
+        <small class="text-danger">{{fieldName()}} is invalid</small>
+    }
+    @else if (Form()?.get(fieldName())?.hasError('email')) {
+        <small class="text-danger">{{fieldName()}} is invalid</small>
+    }
+    @else if (Form()?.get(fieldName())?.hasError('invalid')) {
+        <small class="text-danger">{{fieldName()}} is duplicate</small>
+    }
+
+}
+

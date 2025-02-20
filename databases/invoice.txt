@@ -1,0 +1,14 @@
+-- Invoice table
+
+use ciproject;
+
+CREATE TABLE invoice (
+
+invoice_id INT ,
+item_id INT,
+quantity INT,
+amount DOUBLE,
+FOREIGN KEY (invoice_id) REFERENCES invoice_master(invoice_id),
+FOREIGN KEY (item_id) REFERENCES item_master(id)
+
+);
