@@ -31,7 +31,7 @@ import { Component } from '@angular/core';
         box-shadow: 0px 3px 5px 0px rgba(56, 56, 56, 0.25);
         -webkit-box-shadow: 0px 3px 5px -1px rgba(56, 56, 56, 0.25);
         -moz-box-shadow: 0px 3px 5px -1px rgba(56, 56, 56, 0.25);
-
+        z-index: 200;
         position: relative;
 
         .navigation-container{

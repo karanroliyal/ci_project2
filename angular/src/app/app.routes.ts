@@ -18,7 +18,17 @@ export const routes: Routes = [
                 path:'user-master',
                 title:'User master',
                 loadComponent:()=>import('./masters/user-master/user-master.component').then(m=>m.UserMasterComponent)
-            }
+            },
+            {
+                path:'client-master',
+                title:'Client master',
+                loadComponent:()=>import('./masters/client-master/client-master.component').then(m=>m.ClientMasterComponent)
+            },
+            {
+                path:'dashboard',
+                title:'Dashboard',
+                loadComponent:()=>import('./masters/dashboard/dashboard.component').then(m=>m.DashboardComponent)
+            },
         ]
     }
 

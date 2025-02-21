@@ -1,5 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
+Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
+Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 
 class DropdownModel extends CI_Model{
@@ -44,13 +47,13 @@ class DropdownModel extends CI_Model{
 
         $district_options = "";
 
-        foreach($query->result_array() as $row){
+        // foreach($query->result_array() as $row){
 
-            $district_options .= "<option class='dynamic_district' value='{$row['district_id']}'>{$row['district_name']}</option>";
+        //     $district_options .= "<option class='dynamic_district' value='{$row['district_id']}'>{$row['district_name']}</option>";
 
-        }
+        // }
 
-        echo json_encode(['district_options' => $district_options]);
+        echo json_encode(['district_options' => $query->result_array()]);
 
         
 

@@ -37,6 +37,7 @@ export class PagginationComponent {
   @Input() formName :FormGroup | undefined ;
   @Input() pages_total : number = 1;
   @Input() page_open : number  = 1;
+  @Input() callTable : Function | undefined  ;
 
   private done = inject(UserMasterComponent)
 
@@ -49,7 +50,10 @@ export class PagginationComponent {
       console.log("next page" , this.page_open , this.pages_total , 'before')
       this.formName?.controls['currentPage'].setValue(this.page_open + 1);
       this.page_open++;
-      this.done.getData()
+      // this.done.getData()
+      if(this.callTable){
+        this.callTable();
+      }
       console.log("next page" , this.page_open , this.pages_total , 'after')
     }
   }
@@ -60,7 +64,10 @@ export class PagginationComponent {
       console.log("previous page" , this.page_open , this.pages_total , 'before')
       this.formName?.controls['currentPage'].setValue(this.page_open - 1);
       this.page_open--;
-      this.done.getData()
+      // this.done.getData()
+      if(this.callTable){
+        this.callTable();
+      }
       console.log("previous page" , this.page_open , this.pages_total , 'after')
     }
   }

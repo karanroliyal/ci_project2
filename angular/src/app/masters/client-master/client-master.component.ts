@@ -6,13 +6,17 @@ import { FormValidationComponent } from "../../validation/form-validation/form-v
 import { ApiService } from '../../api.service';
 import Swal from 'sweetalert2';
 import { NgClass } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 
 interface tableData {
   id: string,
   name: string,
   phone: string,
   email: string,
-  image: string
+  address: string,
+  state: string,
+  district: string,
+  pincode: string
 }
 
 interface responseData {
@@ -22,20 +26,15 @@ interface responseData {
 }
 
 @Component({
+  selector: 'app-client-master',
   imports: [ReactiveFormsModule, PagginationComponent, FormValidationComponent, ValidationModule, NgClass],
-  templateUrl: './user-master.component.html',
-  styleUrl: './user-master.component.css',
+  templateUrl: './client-master.component.html',
+  styleUrl: './client-master.component.css'
 })
-
-
-@Injectable({
-  providedIn: 'root'
-})
-
-export class UserMasterComponent implements OnInit {
+export class ClientMasterComponent {
 
   // all table data
-  data: responseData = { table: [{ id: '', name: '', phone: '', email: '', image: '' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
+  data: responseData = { table: [{ id: '', name: '', phone: '', email: '', address: '' , state:'' , district:'' , pincode:'' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
 
   // bootstrapTab change function 
   activeTab: string = 'search';
@@ -47,6 +46,7 @@ export class UserMasterComponent implements OnInit {
     this.preserveField();
     this.updateBtn = false;
     this.imageDiv = true;
+    this.districtArray = [];
   }
 
   result(activeTab: string) {
@@ -64,13 +64,7 @@ export class UserMasterComponent implements OnInit {
       this.data = res;
     });
   }
-  resetLiveForm(){
-    this.myLiveForm.controls['id'].setValue('');
-    this.myLiveForm.controls['name'].setValue('');
-    this.myLiveForm.controls['email'].setValue('');
-    this.myLiveForm.controls['phone'].setValue('');
-    setTimeout(()=>{this.getData()},100);
-  }
+
 
   // Insert data functions 
 
@@ -100,34 +94,14 @@ export class UserMasterComponent implements OnInit {
     }
   }
 
-  clearImage() {
-    this.myDataForm.get('image')?.setValue('');
-    this.imageUrl = '';
-    this.imageDiv = true;
-  }
+  
 
   Action = 'Added';
 
   onSubmitData() {
     const solveUpdate = this.myDataForm.get('action')?.value == 'update';
     console.log(solveUpdate, 'update request')
-    if (solveUpdate && this.imageUrl !== '') {
-      this.myDataForm.controls['image'].clearValidators()
-      this.myDataForm.controls['image'].updateValueAndValidity()
-    }
-    else {
-      this.myDataForm.controls['image'].setValidators([Validators.required])
-      this.myDataForm.controls['image'].updateValueAndValidity()
-    }
-    if (solveUpdate && (this.myDataForm.get('password')?.value || '').trim() === '') {
-      console.log(this.myDataForm.get('password')?.value, 'top')
-      this.myDataForm.controls['password'].clearValidators()
-      this.myDataForm.controls['password'].updateValueAndValidity()
-    } else {
-      console.log(this.myDataForm.get('password')?.value, 'bottom')
-      this.myDataForm.controls['password'].setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(15), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/)]);
-      this.myDataForm.controls['password'].updateValueAndValidity()
-    }
+    
 
     //changing sweet alert text 
     if (solveUpdate) {
@@ -138,7 +112,8 @@ export class UserMasterComponent implements OnInit {
 
 
     this.myDataForm.markAllAsTouched();
-    console.log(this.myDataForm.valid)
+    console.log(this.myDataForm.valid , 'valid or not ')
+    console.log(this.myDataForm.errors , 'errors of form')
     if (this.myDataForm.valid) {
       this.insertData();
     }
@@ -175,7 +150,7 @@ export class UserMasterComponent implements OnInit {
     this.myDataForm.reset({
       table: this.myDataForm.get('table')?.value, // Preserve this field
       id: this.myDataForm.get('id')?.value, // Preserve this field
-      uploadImage: this.myDataForm.get('uploadImage')?.value, // Preserve this field
+      // uploadImage: this.myDataForm.get('uploadImage')?.value, // Preserve this field
       action: this.myDataForm.get('action')?.value, // Preserve this field
     });
   }
@@ -191,11 +166,11 @@ export class UserMasterComponent implements OnInit {
     this.updateBtn = true;
 
     this.myDataForm.controls['action'].setValue('update');
-    this.myDataForm.controls['table'].setValue('user_master');
+    this.myDataForm.controls['table'].setValue('client_master');
 
     const formData = new FormData();
     formData.append('id', value);
-    formData.append('table', 'user_master');
+    formData.append('table', 'client_master');
     formData.append('key', 'id');
     this.tableApi.tableApi('InsertController', 'edit', formData).subscribe((res: any) => {
       if (res.image) {
@@ -204,10 +179,15 @@ export class UserMasterComponent implements OnInit {
         this.imageDiv = false;
         delete res.image;
       }
-      delete res.password;
+      if(res.password){
+        delete res.password;
+      }
       Object.entries(res).forEach(([key, value]) => {
         if (this.myDataForm.get(key)) {
           this.myDataForm.get(key)?.setValue(value);
+        }
+        if(key == 'state'){
+          this.getDistrict(value);
         }
         // console.log(key, value);
       });
@@ -243,12 +223,20 @@ export class UserMasterComponent implements OnInit {
           });
           const formData = new FormData();
           formData.append('deleteid', value);
-          formData.append('tableName', 'user_master');
+          formData.append('tableName', 'client_master');
           formData.append('key', 'id');
 
-          this.tableApi.tableApi('TableController', 'delete', formData).subscribe((res: any) => {
-            console.log(res);
-            this.getData();
+          this.tableApi.tableApi('TableController', 'delete', formData).subscribe((res:any) => {
+            if(res === 1){
+              this.getData();
+              console.log('i am not deleteted')
+            }
+          },(error: any) => {  // Catch API errors (like 500)
+            swalWithBootstrapButtons.fire({
+              title: "Cancelled",
+              text: "You cannot delete!",
+              icon: "error",
+            });
           })
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           swalWithBootstrapButtons.fire({
@@ -259,8 +247,15 @@ export class UserMasterComponent implements OnInit {
         }
       });
 
+  }
 
 
+  resetLiveForm(){
+    this.myLiveForm.controls['id'].setValue('');
+    this.myLiveForm.controls['NAME'].setValue('');
+    this.myLiveForm.controls['email'].setValue('');
+    this.myLiveForm.controls['phone'].setValue('');
+    setTimeout(()=>{this.getData()},100);
   }
 
   showError(error: any) {
@@ -293,43 +288,70 @@ export class UserMasterComponent implements OnInit {
 
   myLiveForm = new FormGroup({
     id: new FormControl(''),
-    name: new FormControl(''),
+    NAME: new FormControl(''),
     phone: new FormControl(''),
     email: new FormControl(''),
-    table_name: new FormControl("user_master"),
-    columnToShow: new FormControl('id,name,phone,email,image'),
+    table_name: new FormControl("client_master"),
+    columnToShow: new FormControl('id,name,phone,email,address,state,district,pincode'),
     currentPage: new FormControl(1),
     pageLimit: new FormControl('5'),
     sortOn: new FormControl('id'),
     sortOrder: new FormControl('DESC'),
+    join_columns: new FormControl('state_master sm , district_master dm'),
+    join_on: new FormControl('client_master.state = sm.state_id, client_master.district = dm.district_id'),
+
   })
 
   myDataForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(40), Validators.pattern(/^[a-zA-Z ]+$/)]),
+    NAME: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(40), Validators.pattern(/^[a-zA-Z ]+$/)]),
     email: new FormControl('', [Validators.email, Validators.required, Validators.maxLength(50)]),
-    image: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(15), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/)]),
+    address: new FormControl('', [Validators.required]),
     phone: new FormControl('', [Validators.required, Validators.maxLength(10), Validators.pattern(/^[0-9]{10}$/)]),
-    table: new FormControl('user_master'),
-    uploadImage: new FormControl('./profiles'),
+    table: new FormControl('client_master'),
+    state: new FormControl('' , Validators.required),
+    district: new FormControl('' , Validators.required),
+    // uploadImage: new FormControl('./profiles'),
     id: new FormControl(''),
     action: new FormControl(''),
+    pincode: new FormControl('' , [Validators.required , Validators.minLength(6) , Validators.maxLength(6)])
   })
 
+  stateArray = [{state_id:1,state_name:''}];
+
+  // state function
+  state(){
+    this.tableApi.tableApi('tablecontroller','state',"").subscribe((res:any)=>{
+      this.stateArray.pop();
+      this.stateArray = res.state;
+    })
+  }
+
+  districtArray = [{district_id:1,district_name:''}];
+
+  // district function
+  getDistrict(stateId:any){
+
+    const formData = new FormData();
+
+    formData.append('state_id', stateId);
+
+    this.tableApi.tableApi('dropdowncontroller','district',formData).subscribe((res:any)=>{
+      console.log(res);
+      this.districtArray.pop();
+      this.districtArray = res.district_options;
+    })
+
+  }
+
   ngOnInit(): void {
-    this.getData()
+    this.getData();
+    this.state()
     // console.log('total Page ', this.data.table);
   }
 
   // chnaging limit value function
   changeMyLimit(limit: string) {
     this.myLiveForm.controls['pageLimit'].setValue(limit)
-    this.getData()
+    this.getData();
   }
-
-
 }
-function updateValueAndValidity() {
-  throw new Error('Function not implemented.');
-}
-

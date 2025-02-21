@@ -16,12 +16,21 @@ export class ApiService{
 
     constructor(private http : HttpClient){}
 
+    FormGroupName : FormGroup|null|undefined;
+    
+
 
     tableApi(controllerName:string ,  methodName:string|null, formValue:any  ):any{
 
         return this.http.post('http://localhost/ci_project2/'+controllerName+'/'+methodName , formValue )
 
     }
+
+
+
+
+
+
 
     
 

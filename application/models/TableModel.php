@@ -35,7 +35,7 @@ class TableModel extends CI_Model
 
         if (in_array('address', $column_names_of_table) && in_array('state', $column_names_of_table) && in_array('district', $column_names_of_table)) {
             array_splice($column_names_of_table, 4, 3);
-            $column_names_of_table[4] = 'concat_ws(" , " , address , sm.state_name , dm.district_name)';
+            $column_names_of_table[4] = 'concat_ws(" , " , address , sm.state_name , dm.district_name) as address';
             $column_names_of_table[5] = 'pincode';
         }
 
@@ -137,7 +137,7 @@ class TableModel extends CI_Model
             // return json_encode(['table' => $table, 'pagination' => $ulData, 'query' => $this->db->last_query()]);
         } else {
 
-            return json_encode(['table' => "<td class='text-center' colspan='" . (count($column_names_of_table) + 3) . "'><h4>No record found</h4></td>", 'pagination' => "" , 'query' => $this->db->last_query()]);
+            return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages'=> 0, 'current_page_opened'=> 0] , 'query' => $this->db->last_query()]);
         }
     }
 
@@ -185,6 +185,14 @@ class TableModel extends CI_Model
         $invoice = $this->db->select('sum(total_amount) as invoice')->get('invoice_master')->row();
 
         return json_encode(['client'=>$client , 'user'=>$user , 'item'=>$item , 'invoice'=>"₹ ".$invoice->invoice]);
+
+    }
+
+    function stateData(){
+
+        $this->db->select('state_id , state_name');
+       $result =  $this->db->get('state_master');
+        return json_encode(['state'=>$result->result_array()]);
 
     }
 

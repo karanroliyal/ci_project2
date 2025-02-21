@@ -47,6 +47,12 @@ class InsertModel extends CI_Model
 
         $id = $formData['id'];
         unset($formData['id']);
+        if(empty($formData['image'])){
+            unset($formData['image']);
+        }
+        if(empty($formData['password'])){
+            unset($formData['password']);
+        }
         $table_name = $formData['table'];
         unset($formData['table']);
 

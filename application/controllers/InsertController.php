@@ -23,6 +23,8 @@ class InsertController extends CI_Controller
             $fileData  = $_FILES['image'];
         }
         $postData = json_decode($this->input->post('data'), true);
+
+        // print_r($this->input->post());die;
         // print_r($_FILES);
         // Properly assign the file to $_FILES
         if($_FILES){
@@ -41,9 +43,10 @@ class InsertController extends CI_Controller
             echo json_encode(['error' => 'Invalid JSON data received']);
             return;
         }
-
+        
         // Override $_POST with the decoded 'data'
         $_POST = $postData;
+
         $table_name = $this->input->post('table');
 
         $this->load->helper('uniqueness');
@@ -70,6 +73,11 @@ class InsertController extends CI_Controller
                 'rules' => 'required|trim|min_length[2]|regex_match[/^[a-zA-Z ]+$/]'
             ],
             [
+                'field' => 'NAME',
+                'label' => 'Name',
+                'rules' => 'required|trim|min_length[2]|regex_match[/^[a-zA-Z ]+$/]'
+            ],
+            [
                 'field' => 'email',
                 'label' => 'Email',
                 'rules' => 'required|trim|valid_emails' . $is_unique_email,
@@ -90,59 +98,59 @@ class InsertController extends CI_Controller
                     'is_unique' => 'The %s is already exist.',
                 ],
             ],
-            //    [
-            //        'field' => 'pincode',
-            //        'label' => 'Pincode',
-            //        'rules' => 'required|trim|max_length[6]|numeric',
-            //    ],
-            //    [
-            //        'field' => 'state',
-            //        'label' => 'State',
-            //        'rules' => 'required|trim|numeric',
-            //    ],
-            //    [
-            //        'field' => 'district',
-            //        'label' => 'District',
-            //        'rules' => 'required|trim|numeric',
-            //    ],
-            //    [
-            //        'field' => 'address',
-            //        'label' => 'Address',
-            //        'rules' => 'required|trim',
-            //    ],
-            //    [
-            //        'field' => 'gender[]',
-            //        'label' => 'Gender',
-            //        'rules' => 'required|trim'
-            //    ],
-            //    [
-            //        'field' => 'languages[]',
-            //        'label' => 'Languages',
-            //        'rules' => 'required|trim'
-            //    ],
-            //    [
-            //        'field' => 'item_name',
-            //        'label' => 'Item name',
-            //        'rules' => 'required|trim|min_length[2]|regex_match[/^[a-zA-Z- ]+$/]'.$is_unique_item,
-            //        "errors" => [
-            //            'is_unique' => 'Item is already exist.',
-            //        ],
-            //    ],
-            //    [
-            //        'field' => 'item_description',
-            //        'label' => 'Item description',
-            //        'rules' => 'required|trim|min_length[2]'
-            //    ],
-            //    [
-            //        'field' => 'item_price',
-            //        'label' => 'Item price',
-            //        'rules' => 'required|trim|numeric'
-            //    ],
-            //    [
-            //        'field' => 'total_amount',
-            //        'label' => 'Total amount',
-            //        'rules' => 'required|trim|numeric'
-            //    ],
+               [
+                   'field' => 'pincode',
+                   'label' => 'Pincode',
+                   'rules' => 'required|trim|max_length[6]|numeric',
+               ],
+               [
+                   'field' => 'state',
+                   'label' => 'State',
+                   'rules' => 'required|trim|numeric',
+               ],
+               [
+                   'field' => 'district',
+                   'label' => 'District',
+                   'rules' => 'required|trim|numeric',
+               ],
+               [
+                   'field' => 'address',
+                   'label' => 'Address',
+                   'rules' => 'required|trim',
+               ],
+               [
+                   'field' => 'gender[]',
+                   'label' => 'Gender',
+                   'rules' => 'required|trim'
+               ],
+               [
+                   'field' => 'languages[]',
+                   'label' => 'Languages',
+                   'rules' => 'required|trim'
+               ],
+               [
+                   'field' => 'item_name',
+                   'label' => 'Item name',
+                   'rules' => 'required|trim|min_length[2]|regex_match[/^[a-zA-Z- ]+$/]'.$is_unique_item,
+                   "errors" => [
+                       'is_unique' => 'Item is already exist.',
+                   ],
+               ],
+               [
+                   'field' => 'item_description',
+                   'label' => 'Item description',
+                   'rules' => 'required|trim|min_length[2]'
+               ],
+               [
+                   'field' => 'item_price',
+                   'label' => 'Item price',
+                   'rules' => 'required|trim|numeric'
+               ],
+               [
+                   'field' => 'total_amount',
+                   'label' => 'Total amount',
+                   'rules' => 'required|trim|numeric'
+               ],
 
         ];
 
@@ -158,8 +166,13 @@ class InsertController extends CI_Controller
             }
         }
 
+         // Filter out the fields that are not present in the form data
+         $fields_to_validate = array_filter($fields, function ($field) {
+            return $this->input->post($field['field']) !== NULL;
+        });
+
         // setting rules for form here 
-        $this->form_validation->set_rules($fields);
+        $this->form_validation->set_rules($fields_to_validate);
 
         // If All things in form are correct it goes here 
         if ($this->form_validation->run()) {

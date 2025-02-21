@@ -31,6 +31,11 @@
                 "input": "src/assets",
                 "output": "src/assets/images"
               },
+              {
+                "glob": "**/*",
+                "input": "../profiles",
+                "output": "/profiles"
+              },
               "src/assets/images"
             ],
             "styles": [

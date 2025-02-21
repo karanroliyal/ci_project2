@@ -42,4 +42,11 @@ class TableController extends CI_Controller{
 
     }
 
+    public function state(){
+
+        $this->load->model('tablemodel');
+        echo $this->tablemodel->stateData();
+
+    }
+
 }

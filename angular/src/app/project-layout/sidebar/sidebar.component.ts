@@ -9,13 +9,13 @@ import { RouterLink, RouterOutlet } from '@angular/router';
       <div class="sidebar-wrapper  col-md-2 col-xl-2 col-sm-2">
         <div class="d-flex flex-column h-100">
           <div>
-            <a class="sidebar-btn" >
+            <a class="sidebar-btn" routerLink="/dash/dashboard">
               <i class="bi bi-grid"></i> Dashboard
             </a>
             <a class="sidebar-btn" routerLink="/dash/user-master">
               <i class="bi bi-person"></i> User master
             </a>
-            <a class="sidebar-btn" href="">
+            <a class="sidebar-btn" routerLink="/dash/client-master">
               <i class="bi bi-people"></i> Client master
             </a>
             <a class="sidebar-btn" href="">
@@ -81,6 +81,9 @@ height: calc(100vh - 45px);
 }
 .content-wrapper {
     padding: 10px;
+    height: calc(100vh - 45px);
+    overflow-y: scroll;
+    z-index: 100
 }
 
 
