@@ -1,0 +1,251 @@
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" [ngClass]="{ 'active':activeTab==='search'}" (click)="searchtab('search')"
+            id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab"
+            aria-controls="nav-home" aria-selected="true">All invoice</button>
+        <button class="nav-link" [ngClass]="{ 'active':activeTab==='result'}" (click)="result('result')"
+            id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
+            aria-controls="nav-profile" aria-selected="false">Add invoice</button>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <!-- // Table container -->
+    <div class="tab-pane fade" id="search" [ngClass]="{ 'show active': activeTab === 'search' }" role="tabpanel"
+        aria-labelledby="home-tab">
+
+        <div class="row mx-0 mt-2">
+
+            <div class="col-12 mb-4">
+
+                <form [formGroup]="myLiveForm" id="myForm">
+                    <div class="px-2 row bg-light rounded pt-4 pb-4">
+
+                        <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
+                            class="col-md-3 col-xl-3 col-sm-8 col-xs-8">
+                            <label for="" class="form-label">Invoice number</label>
+                            <input type="text" formControlName="invoice_number" class="form-control form-control-sm"
+                                placeholder="Enter item name" (keypress)="numberOnly($event)">
+                        </div>
+
+                        <div class="col-md-1 col-xl-1 col-sm-12 mt-4">
+                            <button class="btn btn-danger btn-sm" (click)="resetLiveForm()">reset</button>
+                        </div>
+
+                        <input type="hidden" formControlName="table_name">
+                        <input type="hidden" formControlName="columnToShow">
+                        <input type="hidden" formControlName="currentPage" id="pageId">
+                        <input type="hidden" formControlName="pageLimit" id="limit">
+                        <input type="hidden" formControlName="sortOn" id="sortOn">
+                        <input type="hidden" formControlName="sortOrder" id="sortOrder">
+                        <input type="hidden" formControlName="join_columns"
+                            value="state_master sm , district_master dm">
+                        <input type="hidden" formControlName="join_on"
+                            value="client_master.state = sm.state_id, client_master.district = dm.district_id">
+
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <label for="limitId">Select no.of rows</label>
+                    <select #limit (input)="changeMyLimit(limit.value)" class="form-select form-select-sm limit-select"
+                        id="limitId">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <app-paggination [formName]="myLiveForm" [pages_total]="this.data.pagination.totalPages"
+                    [page_open]="this.data.pagination.current_page_opened" [callTable]="getData.bind(this)" />
+                <!-- <h1>{{data.pagination.totalPages}}</h1>
+                <h1>{{data.pagination.current_page_opened}}</h1> -->
+
+            </div>
+
+            <div class="col-12 table-container">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sno.</th>
+                            <th scope="col">Invoice id</th>
+                            <th scope="col">Invoice number</th>
+                            <th scope="col">Invoice date</th>
+                            <th scope="col">Client name</th>
+                            <th scope="col">Client email</th>
+                            <th scope="col">Client phone</th>
+                            <th scope="col">Total amount</th>
+                            <th scope="col">Mail</th>
+                            <th scope="col">PDF</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- {{data | JSON}} -->
+                        @for(items of data.table ; track $index ; let count = $index ){
+                        <tr>
+                            <td>{{$index+1}}</td>
+                            <td>{{items.invoice_id}}</td>
+                            <td>{{items.invoice_number}}</td>
+                            <td>{{items.invoice_date}}</td>
+                            <td>{{items.NAME}}</td>
+                            <td>{{items.email}}</td>
+                            <td>{{items.phone}}</td>
+                            <td>₹{{items.total_amount}}</td>
+                            <td class="text-center"><i class="bi text-info bi-envelope-paper-fill"></i></td>
+                            <td class="text-center"><i class="bi text-danger bi-file-earmark-pdf-fill"></i></td>
+                            <td>
+                                <div class="d-flex gap-3 justify-content-center">
+                                    <button #editBtn value={{items.invoice_id}}
+                                        (click)="result('result') ; editData(editBtn.value)"
+                                        class="btn btn-primary btn-sm rounded-circle"><i
+                                            class="bi bi-pencil-square"></i></button>
+                                    <button #deleteBtn value={{items.invoice_id}} (click)="deleteData(deleteBtn.value)"
+                                        class="btn btn-danger btn-sm rounded-circle"><i
+                                            class="bi bi-person-dash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        }@empty {
+                        <tr>
+                            <td colspan="11" class="text-center">
+                                <h6>No record Found</h6>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+                <div>
+                    <table class="table">
+
+                    </table>
+                </div>
+
+
+            </div>
+
+
+
+
+        </div>
+
+
+    </div>
+    <!-- // form container -->
+    <div class="tab-pane fade" id="result" [ngClass]="{ 'show active': activeTab === 'result' }" role="tabpanel"
+        aria-labelledby="profile-tab">
+
+        <div class="px-4 mt-2 bg-light pt-4 pb-4 rounded">
+
+
+            <form [formGroup]="myDataForm" id="myDataFormUser" >
+                <div class="row">
+
+
+                    <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                        <label for="invoice_numberId" class="form-label">Invoice Number <span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="invoice_numberId" formControlName="invoice_number"
+                            class="form-control form-control-sm">
+                        <app-form-validation [Form]="myDataForm" fieldName="invoice_number" />
+                    </div>
+
+                    <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                        <label for="invoiceDateId" class="form-label">Invoice Date <span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="invoiceDateId" formControlName="invoice_date"
+                            class="form-control form-control-sm">
+                        <app-form-validation [Form]="myDataForm" fieldName="invoice_date" />
+                    </div>
+
+                    <div class="row mb-3">
+
+                        <input type="hidden" formControlName="client_id">
+
+                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                            <label for="clientNameId" class="form-label">Client name <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="clientNameId" formControlName="NAME"
+                                class="form-control form-control-sm">
+                            <app-form-validation [Form]="myDataForm" fieldName="NAME" />
+                        </div>
+
+                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                            <label for="client_emailId" class="form-label">client email <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="client_emailId" formControlName="email"
+                                class="form-control form-control-sm">
+                            <app-form-validation [Form]="myDataForm" fieldName="email" />
+                        </div>
+
+                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                            <label for="client_phoneId" class="form-label">client phone <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="client_phoneId" formControlName="phone"
+                                class="form-control form-control-sm">
+                            <app-form-validation [Form]="myDataForm" fieldName="phone" />
+                        </div>
+
+                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                            <label for="client_addressId" class="form-label">client address <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="client_addressId" formControlName="address"
+                                class="form-control form-control-sm">
+                            <app-form-validation [Form]="myDataForm" fieldName="address" />
+                        </div>
+
+
+                    </div>
+
+                    <hr>
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                            <label for="clientNameId" class="form-label">Item name <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" id="clientNameId" formControlName="item_name"
+                                class="form-control form-control-sm">
+                            <app-form-validation [Form]="myDataForm" fieldName="item_name" />
+                        </div>
+
+
+                    </div>
+
+
+
+
+                    <input type="hidden" formControlName="table" value="invoice_master">
+                    <input type="hidden" formControlName="uploadImage">
+                    <input type="hidden" formControlName="id">
+                    <input type="hidden" formControlName="action">
+
+                    <div class="d-flex gap-2 mt-2">
+                        <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == true }"
+                            class="btn btn-success btn-sm" type="button">
+                            Add invoice
+                        </button>
+                        <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == false }"
+                            class="btn btn-success btn-sm" type="button">
+                            Update invoice
+                        </button>
+                        <button class="btn btn-danger btn-sm" (click)="preserveField()">
+                            reset
+                        </button>
+                    </div>
+
+
+                </div>
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>

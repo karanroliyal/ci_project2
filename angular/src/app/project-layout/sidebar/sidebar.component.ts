@@ -1,27 +1,27 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink , RouterOutlet],
+  imports: [RouterLink , RouterOutlet , RouterLinkActive],
   template: `
     <div class="sidebar-content-wrapper row mx-0">
       <div class="sidebar-wrapper  col-md-2 col-xl-2 col-sm-2">
         <div class="d-flex flex-column h-100">
           <div>
-            <a class="sidebar-btn" routerLink="/dash/dashboard">
+            <a class="sidebar-btn" routerLink="/dash/dashboard" routerLinkActive="active-link" >
               <i class="bi bi-grid"></i> Dashboard
             </a>
-            <a class="sidebar-btn" routerLink="/dash/user-master">
+            <a class="sidebar-btn" routerLink="/dash/user-master" routerLinkActive="active-link">
               <i class="bi bi-person"></i> User master
             </a>
-            <a class="sidebar-btn" routerLink="/dash/client-master">
+            <a class="sidebar-btn" routerLink="/dash/client-master" routerLinkActive="active-link">
               <i class="bi bi-people"></i> Client master
             </a>
-            <a class="sidebar-btn" href="">
+            <a class="sidebar-btn" routerLink="/dash/item-master" routerLinkActive="active-link">
               <i class="bi bi-bag-plus"></i> Item master
             </a>
-            <a class="sidebar-btn" href="">
+            <a class="sidebar-btn" routerLink="/dash/invoice" routerLinkActive="active-link">
               <i class="bi bi-journal-text"></i> Invoice
             </a>
           </div>
@@ -78,11 +78,16 @@ height: calc(100vh - 45px);
         background-color: #cdeafc;
             color: black;
     }
+    .active-link{
+      background-color: #cdeafc;
+      color: black;
+    }
 }
 .content-wrapper {
     padding: 10px;
     height: calc(100vh - 45px);
-    overflow-y: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
     z-index: 100
 }
 

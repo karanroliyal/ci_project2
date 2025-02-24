@@ -25,7 +25,7 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-2 col-xl-2 col-sm-4 col-xs-4">
                             <label for="" class="form-label">Id</label>
-                            <input type="text" formControlName="id" class="form-control form-control-sm"
+                            <input type="text" formControlName="id" (keypress)="numberOnly($event)"  class="form-control form-control-sm"
                                 placeholder="Enter your id">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
@@ -37,7 +37,7 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-6 col-xs-6">
                             <label for="" class="form-label">Phone</label>
-                            <input type="text" formControlName="phone" class="form-control form-control-sm"
+                            <input type="text" formControlName="phone"  (keypress)="numberOnly($event)"  class="form-control form-control-sm"
                                 placeholder="Enter your phone">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
@@ -172,7 +172,7 @@
 
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
                         <label for="phoneId" class="form-label">Phone <span class="text-danger">*</span></label>
-                        <input type="tel" id="phoneId" formControlName="phone" class="form-control form-control-sm"
+                        <input type="tel" id="phoneId"  (keypress)="numberOnly($event)"  formControlName="phone" class="form-control form-control-sm"
                             maxlength="10">
                         <app-form-validation [Form]="myDataForm" fieldName="phone" [maxLength]="10" />
                     </div>
@@ -206,7 +206,7 @@
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
 
                         <label for="pincodeId" class="form-label">Pincode <span class="text-danger">*</span></label>
-                        <input type="text" id="pincodeId"  maxlength="6" formControlName="pincode" class="form-control form-control-sm" >
+                        <input type="text" id="pincodeId"  (keypress)="numberOnly($event)"   maxlength="6" formControlName="pincode" class="form-control form-control-sm" >
                         <app-form-validation [Form]="myDataForm" fieldName="pincode" [minLength]="6" [maxLength]="6" />
 
                     </div>
@@ -220,11 +220,11 @@
                     <div class="d-flex gap-2 mt-2">
                         <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == true }"
                             class="btn btn-success btn-sm" type="button">
-                            Add user
+                            Add client
                         </button>
                         <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == false }"
                             class="btn btn-success btn-sm" type="button">
-                            Update user
+                            Update client
                         </button>
                         <button class="btn btn-danger btn-sm" (click)="preserveField()">
                             reset

@@ -4,7 +4,6 @@ import { PagginationComponent } from "../../project-layout/paggination/pagginati
 import { ValidationModule } from "../../validation/validation.module";
 import { FormValidationComponent } from "../../validation/form-validation/form-validation.component";
 import { ApiService } from '../../api.service';
-import Swal from 'sweetalert2';
 import { NgClass } from '@angular/common';
 
 interface tableData {
@@ -53,6 +52,11 @@ export class UserMasterComponent implements OnInit {
     this.activeTab = activeTab;
   }
 
+  numberOnly(event:any): boolean {
+   return this.tableApi.numberOnly(event);
+
+  }
+
   constructor(private tableApi: ApiService) {
   }
 
@@ -64,12 +68,12 @@ export class UserMasterComponent implements OnInit {
       this.data = res;
     });
   }
+
+
   resetLiveForm(){
-    this.myLiveForm.controls['id'].setValue('');
-    this.myLiveForm.controls['name'].setValue('');
-    this.myLiveForm.controls['email'].setValue('');
-    this.myLiveForm.controls['phone'].setValue('');
-    setTimeout(()=>{this.getData()},100);
+
+    this.tableApi.resetLiveForm(this.myLiveForm , ['id','name','email','phone'] , this.getData.bind(this));
+
   }
 
   // Insert data functions 
@@ -109,184 +113,57 @@ export class UserMasterComponent implements OnInit {
   Action = 'Added';
 
   onSubmitData() {
-    const solveUpdate = this.myDataForm.get('action')?.value == 'update';
-    console.log(solveUpdate, 'update request')
-    if (solveUpdate && this.imageUrl !== '') {
-      this.myDataForm.controls['image'].clearValidators()
-      this.myDataForm.controls['image'].updateValueAndValidity()
-    }
-    else {
-      this.myDataForm.controls['image'].setValidators([Validators.required])
-      this.myDataForm.controls['image'].updateValueAndValidity()
-    }
-    if (solveUpdate && (this.myDataForm.get('password')?.value || '').trim() === '') {
-      console.log(this.myDataForm.get('password')?.value, 'top')
-      this.myDataForm.controls['password'].clearValidators()
-      this.myDataForm.controls['password'].updateValueAndValidity()
-    } else {
-      console.log(this.myDataForm.get('password')?.value, 'bottom')
-      this.myDataForm.controls['password'].setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(15), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/)]);
-      this.myDataForm.controls['password'].updateValueAndValidity()
-    }
-
-    //changing sweet alert text 
-    if (solveUpdate) {
-      this.Action = 'Updated'
-    } else {
-      this.Action = 'Added';
-    }
-
-
-    this.myDataForm.markAllAsTouched();
-    console.log(this.myDataForm.valid)
-    if (this.myDataForm.valid) {
-      this.insertData();
-    }
+    this.tableApi.onSubmitData(this.myDataForm,this.imageUrl , this.insertData.bind(this))
   }
 
 
-  insertData() {
-    const formData = new FormData();
-
-    if (this.file) {
-      formData.append('image', this.file); // Append file directly
-    }
-    formData.append('data', JSON.stringify(this.myDataForm.value)); // Send additional form data
-    this.tableApi.tableApi('insertcontroller', 'insert', formData).subscribe((res: any) => {
-      if (res.error) {
-        this.showError(res.error);
-      } else {
-        this.searchtab('search');
-        this.getData();
-        Swal.fire({
-          title: `User ${this.Action} Successfully!`,
-          icon: "success",
-          draggable: false,
-        });
-        this.preserveField()
-        this.myDataForm.get('action')?.setValue('');
-      }
-    })
-
+  insertData(action:string) {
+    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),this.file,this.preserveField.bind(this),action)
   }
 
   // reset form fileds
   preserveField() {
-    this.myDataForm.reset({
-      table: this.myDataForm.get('table')?.value, // Preserve this field
-      id: this.myDataForm.get('id')?.value, // Preserve this field
-      uploadImage: this.myDataForm.get('uploadImage')?.value, // Preserve this field
-      action: this.myDataForm.get('action')?.value, // Preserve this field
-    });
+    this.tableApi.preserveField(this.myDataForm , ['table' ,'id' ,'uploadImage' ,'action'] , this.clearImage.bind(this));
   }
-
-
 
 
   updateBtn = false;
 
   // Edit data functions
-  editData(value: any) {
-
-    this.updateBtn = true;
-
-    this.myDataForm.controls['action'].setValue('update');
-    this.myDataForm.controls['table'].setValue('user_master');
-
-    const formData = new FormData();
-    formData.append('id', value);
-    formData.append('table', 'user_master');
-    formData.append('key', 'id');
-    this.tableApi.tableApi('InsertController', 'edit', formData).subscribe((res: any) => {
-      if (res.image) {
-        // console.log(res.image,'imagepath');
-        this.imageUrl = 'http://localhost/ci_project2/profiles/' + res.image;
-        this.imageDiv = false;
-        delete res.image;
-      }
-      delete res.password;
-      Object.entries(res).forEach(([key, value]) => {
-        if (this.myDataForm.get(key)) {
-          this.myDataForm.get(key)?.setValue(value);
-        }
-        // console.log(key, value);
-      });
-    })
-
+  async editData(value: any) {
+    try {
+      const [updatedImageUrl, updatedUpdateBtn , updatedDiv] = await this.tableApi.editData(
+        value,
+        this.updateBtn,
+        this.imageUrl,
+        this.imageDiv,
+        this.myDataForm,
+        'user_master',
+        'id',
+        null
+      );
+  
+      // Update the component properties with the returned values
+      this.imageUrl = updatedImageUrl;
+      this.updateBtn = updatedUpdateBtn;
+      this.imageDiv = updatedDiv;
+  
+      console.log('Updated imageUrl:', this.imageUrl);
+      console.log('Updated updateBtn:', this.updateBtn);
+      console.log('Updated updateImagediv:', this.imageDiv);
+    } catch (error) {
+      console.error('Error editing data:', error);
+    }
   }
 
   // Delete data function 
   deleteData(value: string) {
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
-      },
-      buttonsStyling: false,
-    });
-    swalWithBootstrapButtons
-      .fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-        reverseButtons: true,
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          swalWithBootstrapButtons.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success",
-          });
-          const formData = new FormData();
-          formData.append('deleteid', value);
-          formData.append('tableName', 'user_master');
-          formData.append('key', 'id');
-
-          this.tableApi.tableApi('TableController', 'delete', formData).subscribe((res: any) => {
-            console.log(res);
-            this.getData();
-          })
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          swalWithBootstrapButtons.fire({
-            title: "Cancelled",
-            text: "Your data is safe :)",
-            icon: "error",
-          });
-        }
-      });
-
-
-
+    this.tableApi.deleteData(value ,this.getData.bind(this) , 'id' , 'user_master')
   }
 
   showError(error: any) {
 
-    console.log(error, 'error')
-    console.log("get any error")
-
-    Object.entries(error).forEach(([key, value]) => {
-
-      let err = key;
-      console.log(key)
-      // this.myDataForm.controls['email']
-      if (key === 'email') {
-        console.log(key);
-      }
-      if (key == 'image') {
-        this.myDataForm.controls['phone'].addValidators([Validators.nullValidator]);
-      }
-
-      Swal.fire({
-        title: `${value}`,
-        icon: "error",
-        draggable: false,
-      });
-
-    });
+    this.tableApi.showError(error , this.myDataForm);
 
 
   }
@@ -321,7 +198,7 @@ export class UserMasterComponent implements OnInit {
     // console.log('total Page ', this.data.table);
   }
 
-  // chnaging limit value function
+  // changing limit value function
   changeMyLimit(limit: string) {
     this.myLiveForm.controls['pageLimit'].setValue(limit)
     this.getData()

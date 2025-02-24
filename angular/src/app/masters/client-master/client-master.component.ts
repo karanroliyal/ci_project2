@@ -34,7 +34,7 @@ interface responseData {
 export class ClientMasterComponent {
 
   // all table data
-  data: responseData = { table: [{ id: '', name: '', phone: '', email: '', address: '' , state:'' , district:'' , pincode:'' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
+  data: responseData = { table: [{ id: '', name: '', phone: '', email: '', address: '', state: '', district: '', pincode: '' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
 
   // bootstrapTab change function 
   activeTab: string = 'search';
@@ -94,196 +94,72 @@ export class ClientMasterComponent {
     }
   }
 
-  
+
 
   Action = 'Added';
 
   onSubmitData() {
-    const solveUpdate = this.myDataForm.get('action')?.value == 'update';
-    console.log(solveUpdate, 'update request')
-    
-
-    //changing sweet alert text 
-    if (solveUpdate) {
-      this.Action = 'Updated'
-    } else {
-      this.Action = 'Added';
-    }
-
-
-    this.myDataForm.markAllAsTouched();
-    console.log(this.myDataForm.valid , 'valid or not ')
-    console.log(this.myDataForm.errors , 'errors of form')
-    if (this.myDataForm.valid) {
-      this.insertData();
-    }
+    this.tableApi.onSubmitData(this.myDataForm,this.imageUrl , this.insertData.bind(this))
   }
 
 
-  insertData() {
-    const formData = new FormData();
-
-    if (this.file) {
-      formData.append('image', this.file); // Append file directly
-    }
-    formData.append('data', JSON.stringify(this.myDataForm.value)); // Send additional form data
-    this.tableApi.tableApi('insertcontroller', 'insert', formData).subscribe((res: any) => {
-      if (res.error) {
-        this.showError(res.error);
-      } else {
-        this.searchtab('search');
-        this.getData();
-        Swal.fire({
-          title: `User ${this.Action} Successfully!`,
-          icon: "success",
-          draggable: false,
-        });
-        this.preserveField()
-        this.myDataForm.get('action')?.setValue('');
-      }
-    })
-
+  insertData(action:string) {
+    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),null,this.preserveField.bind(this),action)
   }
+
 
   // reset form fileds
   preserveField() {
-    this.myDataForm.reset({
-      table: this.myDataForm.get('table')?.value, // Preserve this field
-      id: this.myDataForm.get('id')?.value, // Preserve this field
-      // uploadImage: this.myDataForm.get('uploadImage')?.value, // Preserve this field
-      action: this.myDataForm.get('action')?.value, // Preserve this field
-    });
+    this.tableApi.preserveField(this.myDataForm, ['table', 'id', 'action'], null);
   }
 
+  numberOnly(event: any): boolean {
+   return this.tableApi.numberOnly(event);
 
-
+  }
 
   updateBtn = false;
 
   // Edit data functions
-  editData(value: any) {
+  async editData(value: any) {
+    try {
+      const [updatedImageUrl, updatedUpdateBtn, updatedDiv] = await this.tableApi.editData(
+        value,
+        this.updateBtn,
+        this.imageUrl,
+        this.imageDiv,
+        this.myDataForm,
+        'client_master',
+        'id',
+        this.getDistrict.bind(this)
+      );
 
-    this.updateBtn = true;
+      // Update the component properties with the returned values
+      this.imageUrl = updatedImageUrl;
+      this.updateBtn = updatedUpdateBtn;
+      this.imageDiv = updatedDiv;
 
-    this.myDataForm.controls['action'].setValue('update');
-    this.myDataForm.controls['table'].setValue('client_master');
-
-    const formData = new FormData();
-    formData.append('id', value);
-    formData.append('table', 'client_master');
-    formData.append('key', 'id');
-    this.tableApi.tableApi('InsertController', 'edit', formData).subscribe((res: any) => {
-      if (res.image) {
-        // console.log(res.image,'imagepath');
-        this.imageUrl = 'http://localhost/ci_project2/profiles/' + res.image;
-        this.imageDiv = false;
-        delete res.image;
-      }
-      if(res.password){
-        delete res.password;
-      }
-      Object.entries(res).forEach(([key, value]) => {
-        if (this.myDataForm.get(key)) {
-          this.myDataForm.get(key)?.setValue(value);
-        }
-        if(key == 'state'){
-          this.getDistrict(value);
-        }
-        // console.log(key, value);
-      });
-    })
-
+      console.log('Updated imageUrl:', this.imageUrl);
+      console.log('Updated updateBtn:', this.updateBtn);
+      console.log('Updated updateImagediv:', this.imageDiv);
+    } catch (error) {
+      console.error('Error editing data:', error);
+    }
   }
 
   // Delete data function 
   deleteData(value: string) {
-    const swalWithBootstrapButtons = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
-      },
-      buttonsStyling: false,
-    });
-    swalWithBootstrapButtons
-      .fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-        reverseButtons: true,
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          swalWithBootstrapButtons.fire({
-            title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success",
-          });
-          const formData = new FormData();
-          formData.append('deleteid', value);
-          formData.append('tableName', 'client_master');
-          formData.append('key', 'id');
-
-          this.tableApi.tableApi('TableController', 'delete', formData).subscribe((res:any) => {
-            if(res === 1){
-              this.getData();
-              console.log('i am not deleteted')
-            }
-          },(error: any) => {  // Catch API errors (like 500)
-            swalWithBootstrapButtons.fire({
-              title: "Cancelled",
-              text: "You cannot delete!",
-              icon: "error",
-            });
-          })
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          swalWithBootstrapButtons.fire({
-            title: "Cancelled",
-            text: "Your data is safe :)",
-            icon: "error",
-          });
-        }
-      });
-
+    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'client_master')
   }
 
 
-  resetLiveForm(){
-    this.myLiveForm.controls['id'].setValue('');
-    this.myLiveForm.controls['NAME'].setValue('');
-    this.myLiveForm.controls['email'].setValue('');
-    this.myLiveForm.controls['phone'].setValue('');
-    setTimeout(()=>{this.getData()},100);
+  resetLiveForm() {
+    this.tableApi.resetLiveForm(this.myLiveForm, ['id', 'NAME', 'email', 'phone'], this.getData.bind(this))
   }
+
 
   showError(error: any) {
-
-    console.log(error, 'error')
-    console.log("get any error")
-
-    Object.entries(error).forEach(([key, value]) => {
-
-      let err = key;
-      console.log(key)
-      // this.myDataForm.controls['email']
-      if (key === 'email') {
-        console.log(key);
-      }
-      if (key == 'image') {
-        this.myDataForm.controls['phone'].addValidators([Validators.nullValidator]);
-      }
-
-      Swal.fire({
-        title: `${value}`,
-        icon: "error",
-        draggable: false,
-      });
-
-    });
-
-
+    this.tableApi.showError(error, this.myDataForm);
   }
 
   myLiveForm = new FormGroup({
@@ -308,34 +184,34 @@ export class ClientMasterComponent {
     address: new FormControl('', [Validators.required]),
     phone: new FormControl('', [Validators.required, Validators.maxLength(10), Validators.pattern(/^[0-9]{10}$/)]),
     table: new FormControl('client_master'),
-    state: new FormControl('' , Validators.required),
-    district: new FormControl('' , Validators.required),
+    state: new FormControl('', Validators.required),
+    district: new FormControl('', Validators.required),
     // uploadImage: new FormControl('./profiles'),
     id: new FormControl(''),
     action: new FormControl(''),
-    pincode: new FormControl('' , [Validators.required , Validators.minLength(6) , Validators.maxLength(6)])
+    pincode: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(6)])
   })
 
-  stateArray = [{state_id:1,state_name:''}];
+  stateArray = [{ state_id: 1, state_name: '' }];
 
   // state function
-  state(){
-    this.tableApi.tableApi('tablecontroller','state',"").subscribe((res:any)=>{
+  state() {
+    this.tableApi.tableApi('tablecontroller', 'state', "").subscribe((res: any) => {
       this.stateArray.pop();
       this.stateArray = res.state;
     })
   }
 
-  districtArray = [{district_id:1,district_name:''}];
+  districtArray = [{ district_id: 1, district_name: '' }];
 
   // district function
-  getDistrict(stateId:any){
+  getDistrict(stateId: any) {
 
     const formData = new FormData();
 
     formData.append('state_id', stateId);
 
-    this.tableApi.tableApi('dropdowncontroller','district',formData).subscribe((res:any)=>{
+    this.tableApi.tableApi('dropdowncontroller', 'district', formData).subscribe((res: any) => {
       console.log(res);
       this.districtArray.pop();
       this.districtArray = res.district_options;

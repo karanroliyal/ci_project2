@@ -29,6 +29,16 @@ export const routes: Routes = [
                 title:'Dashboard',
                 loadComponent:()=>import('./masters/dashboard/dashboard.component').then(m=>m.DashboardComponent)
             },
+            {
+                path:'item-master',
+                title:'Item master',
+                loadComponent:()=>import('./masters/item-master/item-master.component').then(m=>m.ItemMasterComponent)
+            },
+            {
+                path:'invoice',
+                title:'Invoice master',
+                loadComponent:()=>import('./masters/invoice/invoice.component').then(m=>m.InvoiceComponent)
+            },
         ]
     }
 

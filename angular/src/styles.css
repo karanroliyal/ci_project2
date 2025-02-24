@@ -9,3 +9,13 @@ body {
     box-sizing: border-box;
 }
 
+.table-container{
+    overflow-x: scroll;
+}
+
+.table{
+    thead{
+        white-space: nowrap;
+    }
+}
+

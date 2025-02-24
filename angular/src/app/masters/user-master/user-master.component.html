@@ -23,7 +23,7 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-2 col-xl-2 col-sm-4 col-xs-4">
                             <label for="" class="form-label">Id</label>
-                            <input type="text" formControlName="id" class="form-control form-control-sm"
+                            <input type="text" formControlName="id" (keypress)="numberOnly($event)" class="form-control form-control-sm"
                                 placeholder="Enter your id">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
@@ -35,7 +35,7 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-6 col-xs-6">
                             <label for="" class="form-label">Phone</label>
-                            <input type="text" formControlName="phone" class="form-control form-control-sm"
+                            <input type="text" formControlName="phone" (keypress)="numberOnly($event)" class="form-control form-control-sm"
                                 placeholder="Enter your phone">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
@@ -168,14 +168,14 @@
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
                         <label for="passwordId" class="form-label">Password <span class="text-danger">*</span></label>
                         <input type="password" id="passwordId" formControlName="password"
-                            class="form-control form-control-sm">
+                            class="form-control form-control-sm" maxlength="15">
                         <app-form-validation [Form]="myDataForm" fieldName="password" [maxLength]="15"
                             [minLength]="8" />
                     </div>
 
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
                         <label for="phoneId" class="form-label">Phone <span class="text-danger">*</span></label>
-                        <input type="tel" id="phoneId" formControlName="phone" class="form-control form-control-sm"
+                        <input type="tel" (keypress)="numberOnly($event)" id="phoneId" formControlName="phone" class="form-control form-control-sm"
                             maxlength="10">
                         <app-form-validation [Form]="myDataForm" fieldName="phone" [maxLength]="10" />
                     </div>
