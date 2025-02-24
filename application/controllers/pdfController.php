@@ -1,5 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
+Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
+Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
+Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 require_once FCPATH . '/vendor/autoload.php';
 

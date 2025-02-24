@@ -39,6 +39,11 @@ export const routes: Routes = [
                 title:'Invoice master',
                 loadComponent:()=>import('./masters/invoice/invoice.component').then(m=>m.InvoiceComponent)
             },
+            {
+                path:'auto',
+                title:'Invoice master',
+                loadComponent:()=>import('./masters/autocomplete/autocomplete.component').then(m=>m.AutocompleteComponent)
+            },
         ]
     }
 

@@ -78,8 +78,8 @@
                             <th scope="col">Client email</th>
                             <th scope="col">Client phone</th>
                             <th scope="col">Total amount</th>
-                            <th scope="col">Mail</th>
                             <th scope="col">PDF</th>
+                            <th scope="col">Mail</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -95,8 +95,10 @@
                             <td>{{items.email}}</td>
                             <td>{{items.phone}}</td>
                             <td>₹{{items.total_amount}}</td>
+                            <td class="text-center"><a target="_blank"
+                                    href="http://localhost/ci_project2/pdfcontroller?myId={{items.invoice_id}}"><i
+                                        class="bi text-danger bi-file-earmark-pdf-fill"></i></a></td>
                             <td class="text-center"><i class="bi text-info bi-envelope-paper-fill"></i></td>
-                            <td class="text-center"><i class="bi text-danger bi-file-earmark-pdf-fill"></i></td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-center">
                                     <button #editBtn value={{items.invoice_id}}
@@ -119,23 +121,14 @@
                     </tbody>
 
                 </table>
-
-                <div>
-                    <table class="table">
-
-                    </table>
-                </div>
-
-
             </div>
-
-
-
 
         </div>
 
 
+
     </div>
+
     <!-- // form container -->
     <div class="tab-pane fade" id="result" [ngClass]="{ 'show active': activeTab === 'result' }" role="tabpanel"
         aria-labelledby="profile-tab">
@@ -143,7 +136,7 @@
         <div class="px-4 mt-2 bg-light pt-4 pb-4 rounded">
 
 
-            <form [formGroup]="myDataForm" id="myDataFormUser" >
+            <form [formGroup]="myDataForm" id="myDataFormUser">
                 <div class="row">
 
 
@@ -159,62 +152,110 @@
                         <label for="invoiceDateId" class="form-label">Invoice Date <span
                                 class="text-danger">*</span></label>
                         <input type="text" id="invoiceDateId" formControlName="invoice_date"
-                            class="form-control form-control-sm">
-                        <app-form-validation [Form]="myDataForm" fieldName="invoice_date" />
-                    </div>
-
-                    <div class="row mb-3">
-
-                        <input type="hidden" formControlName="client_id">
-
-                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
-                            <label for="clientNameId" class="form-label">Client name <span
+                            class="form-control form-control-sm"  >
+                            <app-form-validation [Form]="myDataForm" fieldName="invoice_date" />
+                        </div>
+                        
+                        <div class="row mb-3">
+                            
+                            <input type="hidden" formControlName="client_id" [readOnly]="true">
+                            
+                            <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                                <label for="clientNameId" class="form-label">Client name <span
                                     class="text-danger">*</span></label>
-                            <input type="text" id="clientNameId" formControlName="NAME"
-                                class="form-control form-control-sm">
+                                    <input type="text" id="clientNameId" formControlName="NAME"
+                                    class="form-control form-control-sm"  #clientName>
+                                    <app-autocomplete  [clientName]="clientName.value"  ></app-autocomplete>
                             <app-form-validation [Form]="myDataForm" fieldName="NAME" />
                         </div>
 
                         <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
                             <label for="client_emailId" class="form-label">client email <span
                                     class="text-danger">*</span></label>
-                            <input type="text" id="client_emailId" formControlName="email"
-                                class="form-control form-control-sm">
+                            <input type="text" id="client_emailId" formControlName="email" [readOnly]="true"
+                                class="form-control form-control-sm bg-light">
                             <app-form-validation [Form]="myDataForm" fieldName="email" />
                         </div>
 
                         <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
                             <label for="client_phoneId" class="form-label">client phone <span
                                     class="text-danger">*</span></label>
-                            <input type="text" id="client_phoneId" formControlName="phone"
-                                class="form-control form-control-sm">
+                            <input type="text" id="client_phoneId" formControlName="phone" [readOnly]="true"
+                                class="form-control form-control-sm bg-light">
                             <app-form-validation [Form]="myDataForm" fieldName="phone" />
                         </div>
 
                         <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
                             <label for="client_addressId" class="form-label">client address <span
                                     class="text-danger">*</span></label>
-                            <input type="text" id="client_addressId" formControlName="address"
-                                class="form-control form-control-sm">
+                            <input type="text" id="client_addressId" formControlName="address" [readOnly]="true"
+                                class="form-control form-control-sm bg-light">
                             <app-form-validation [Form]="myDataForm" fieldName="address" />
                         </div>
 
-
+ 
                     </div>
 
                     <hr>
 
-                    <div class="row mb-3">
 
-                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
-                            <label for="clientNameId" class="form-label">Item name <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" id="clientNameId" formControlName="item_name"
-                                class="form-control form-control-sm">
-                            <app-form-validation [Form]="myDataForm" fieldName="item_name" />
+                    <div class="row mb-3 " #cloneForm formArrayName="items_container">
+
+                        <div class="row mb-3 cloneDivLength"
+                            *ngFor="let item of items_container.controls ; let i = index" [formGroupName]="i">
+
+                            <input type="hidden" formControlName="item_id" [readOnly]="true"
+                                (keypress)="numberOnly($event)">
+
+                            <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                                <label for="itemNameId" class="form-label">Item name <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="itemNameId" formControlName="item_name"
+                                    class="form-control form-control-sm" >
+                                <app-form-validation [Form]="$any(item)" fieldName="item_name" />
+                                
+                                
+                            </div>
+
+
+                            <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                                <label for="itemPriceId" class="form-label">Item price <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="itemPriceId" formControlName="item_price"
+                                    class="form-control form-control-sm bg-light"
+                                    (keypress)="decimalNumberOnly($event)">
+                                <app-form-validation [Form]="$any(item)" fieldName="item_price" />
+                            </div>
+
+                            <div class="col-md-2 col-xl-2 col-sm-6 col-xs-6 mb-3">
+                                <label for="itemQuantityId" class="form-label">Quantity <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" id="itemQuantityId" formControlName="quantity"
+                                    (keypress)="numberOnly($event)" class="form-control form-control-sm">
+                                <app-form-validation [Form]="$any(item)" fieldName="quantity" />
+                            </div>
+
+                            <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                                <label for="itemQuantityId" class="form-label">Amount <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" id="itemQuantityId" formControlName="amount"
+                                    class="form-control form-control-sm bg-light"
+                                    (keypress)="decimalNumberOnly($event)">
+                                <app-form-validation [Form]="$any(item)" fieldName="amount" />
+                            </div>
+
+                            <div class="col-1 col-md-1 col-xl-1 mt-4">
+                                <button class="btn btn-danger btn-sm" (click)="removeItemForm(i)">X</button>
+                            </div>
+
                         </div>
+                    </div>
 
 
+                    <div class="mb-3">
+                        <button (click)="addItemsForm()" class="btn btn-warning btn-sm">
+                            Add item
+                        </button>
                     </div>
 
 
@@ -222,7 +263,7 @@
 
                     <input type="hidden" formControlName="table" value="invoice_master">
                     <input type="hidden" formControlName="uploadImage">
-                    <input type="hidden" formControlName="id">
+                    <input type="hidden" formControlName="invoice_id">
                     <input type="hidden" formControlName="action">
 
                     <div class="d-flex gap-2 mt-2">
@@ -242,6 +283,7 @@
 
                 </div>
             </form>
+
 
 
         </div>

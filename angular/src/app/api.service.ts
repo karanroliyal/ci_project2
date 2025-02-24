@@ -151,6 +151,10 @@ export class ApiService {
                     if (res.password) {
                         delete res.password;
                     }
+                    if(res.data && res.item){
+                        res = res.data;
+                        console.log(res)
+                    }
                     Object.entries(res).forEach(([key, value]) => {
                         if (formGroup.get(key)) {
                             formGroup.get(key)?.setValue(value);
@@ -174,7 +178,7 @@ export class ApiService {
     }
 
     // Stop reset button of Form to reset hidden fields of table 
-    preserveField(formGroup: FormGroup, dontReset: string[], imageRemoveFunction: Function | null) {
+    preserveField(formGroup: FormGroup, dontReset: string[], imageRemoveFunction: Function | null , RemoveCloneFunction? : Function ) {
         const preservedValues: { [key: string]: any } = {};
         dontReset.forEach((controlName) => {
             preservedValues[controlName] = formGroup.get(controlName)?.value;

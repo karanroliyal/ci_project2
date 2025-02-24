@@ -40,7 +40,7 @@ function loginMe() {
                     $(".alert-success").removeClass("d-none")
                     $(".alert-success").text("Login successfully!")
                     $("#loginForm").trigger("reset");
-                    window.location.href= baseUrl+"pagescontroller/sessionControl";
+                    // window.location.href= baseUrl+"pagescontroller/sessionControl";
                 }
                 else if(data == 0){
                     $(".alert-danger").removeClass("d-none")

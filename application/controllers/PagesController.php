@@ -30,7 +30,7 @@ class PagesController extends CI_Controller{
     }
     public function sessionControl(){
 
-        $this->load->view('index');
+        // $this->load->view('index');
 
     }
 
