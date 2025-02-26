@@ -5,6 +5,7 @@ import { ValidationModule } from "../../validation/validation.module";
 import { FormValidationComponent } from "../../validation/form-validation/form-validation.component";
 import { ApiService } from '../../api.service';
 import { NgClass } from '@angular/common';
+import Swal from 'sweetalert2';
 
 interface tableData {
   id: string,
@@ -27,7 +28,7 @@ interface responseData {
   styleUrl: './item-master.component.css'
 })
 export class ItemMasterComponent {
- // all table data
+  // all table data
   data: responseData = { table: [{ id: '', item_name: '', item_description: '', item_price: '', image: '' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
 
   // bootstrapTab change function 
@@ -53,14 +54,26 @@ export class ItemMasterComponent {
   Total_pages = this.data.pagination.current_page_opened;
 
   getData() {
-    this.tableApi.tableApi('tablecontroller', '', this.myLiveForm.value).subscribe((res: any) => {
+
+    const formData = new FormData();
+
+    formData.append('data',JSON.stringify(this.myLiveForm.value));
+
+    this.tableApi.tableApi('Item_Master_Controller', 'item_table', formData).subscribe((res: any) => {
       this.data = res;
+    }, (error: any) => {
+      Swal.fire({
+        title: 'Unable to connect with database',
+        icon: "error",
+        draggable: false,
+      });
+      this.data.table = [];
     });
   }
 
-  
-  resetLiveForm(){
-      this.tableApi.resetLiveForm(this.myLiveForm , ['item_name'] ,this.getData.bind(this) )
+
+  resetLiveForm() {
+    this.tableApi.resetLiveForm(this.myLiveForm, ['item_name'], this.getData.bind(this))
   }
 
   // Insert data functions 
@@ -100,24 +113,24 @@ export class ItemMasterComponent {
   Action = 'Added';
 
   onSubmitData() {
-    this.tableApi.onSubmitData(this.myDataForm,this.imageUrl , this.insertData.bind(this))
+    this.tableApi.onSubmitData(this.myDataForm, this.imageUrl, this.insertData.bind(this))
   }
 
 
-  insertData(action:string) {
-    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),this.file,this.preserveField.bind(this),action)
+  insertData(action: string) {
+    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), this.file, this.preserveField.bind(this), action , 'insert_item_data','Item_Master_Controller','update_item_data')
   }
 
   // reset form fileds
-   preserveField() {
-    this.tableApi.preserveField(this.myDataForm , ['table' ,'id' ,'uploadImage' ,'action'] , this.clearImage.bind(this));
+  preserveField() {
+    this.tableApi.preserveField(this.myDataForm, ['table', 'id', 'uploadImage', 'action'], this.clearImage.bind(this));
   }
 
-  numberOnly(event:any): boolean {
+  numberOnly(event: any): boolean {
     return this.tableApi.numberOnly(event);
-   }
+  }
 
-  decimalNumberOnly(event:any): boolean {
+  decimalNumberOnly(event: any): boolean {
     return this.tableApi.decimalNumberOnly(event);
   }
 
@@ -127,7 +140,7 @@ export class ItemMasterComponent {
   // Edit data functions
   async editData(value: any) {
     try {
-      const [updatedImageUrl, updatedUpdateBtn , updatedDiv] = await this.tableApi.editData(
+      const [updatedImageUrl, updatedUpdateBtn, updatedDiv] = await this.tableApi.editData(
         value,
         this.updateBtn,
         this.imageUrl,
@@ -135,14 +148,17 @@ export class ItemMasterComponent {
         this.myDataForm,
         'item_master',
         'id',
-        null
+        null,
+        '',
+        'Item_Master_Controller',
+        'item_edit'
       );
-  
+
       // Update the component properties with the returned values
       this.imageUrl = updatedImageUrl;
       this.updateBtn = updatedUpdateBtn;
       this.imageDiv = updatedDiv;
-  
+
       console.log('Updated imageUrl:', this.imageUrl);
       console.log('Updated updateBtn:', this.updateBtn);
       console.log('Updated updateImagediv:', this.imageDiv);
@@ -153,11 +169,11 @@ export class ItemMasterComponent {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value ,this.getData.bind(this) , 'id' , 'item_master')
+    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'item_master')
   }
 
   showError(error: any) {
-    this.tableApi.showError(error , this.myDataForm);
+    this.tableApi.showError(error, this.myDataForm);
   }
 
   myLiveForm = new FormGroup({
@@ -171,9 +187,9 @@ export class ItemMasterComponent {
   })
 
   myDataForm = new FormGroup({
-    item_name : new FormControl('',[Validators.required , Validators.minLength(3) , Validators.maxLength(40) , Validators.pattern(/^[a-zA-Z- ]+$/)]),
-    item_description : new FormControl('' , [Validators.required , Validators.minLength(3) ]),
-    item_price : new FormControl('' , [Validators.required , Validators.pattern(/^[0-9.]+$/)]),
+    item_name: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(40), Validators.pattern(/^[a-zA-Z- ]+$/)]),
+    item_description: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    item_price: new FormControl('', [Validators.required, Validators.pattern(/^[0-9.]+$/)]),
     image: new FormControl('', [Validators.required]),
     table: new FormControl('item_master'),
     uploadImage: new FormControl('./items'),

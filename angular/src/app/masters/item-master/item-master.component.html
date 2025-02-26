@@ -85,7 +85,7 @@
                             <td>{{items.item_description}}</td>
                             <td>₹{{items.item_price}}</td>
                             <td class="text-center"><img width="30px"
-                                    src="http://localhost/ci_project2/items/{{items.image}}" /></td>
+                                    src="http://localhost/ci_project2/api/items/{{items.image}}" /></td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-center">
                                     <button #editBtn value={{items.id}}
@@ -100,7 +100,7 @@
                         </tr>
                         }@empty {
                         <tr>
-                            <td colspan="6" class="text-center">
+                            <td colspan="7" class="text-center">
                                 <h6>No record Found</h6>
                             </td>
                         </tr>

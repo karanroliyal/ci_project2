@@ -7,6 +7,7 @@ import { ApiService } from '../../api.service';
 import { NgClass, NgFor } from '@angular/common';
 import { OnInit } from '@angular/core';
 import { AutocompleteComponent } from "../autocomplete/autocomplete.component";
+import Swal from 'sweetalert2';
 
 interface tableData {
   invoice_id: string,
@@ -63,8 +64,22 @@ export class InvoiceComponent implements OnInit {
   Total_pages = this.data.pagination.current_page_opened;
 
   getData() {
-    this.tableApi.tableApi('tablecontroller', '', this.myLiveForm.value).subscribe((res: any) => {
+
+    const formData = new FormData();
+
+    formData.append('data' , JSON.stringify(this.myLiveForm.value))
+
+    this.tableApi.tableApi('Invoice_Master_Controller', 'invoice_table', formData ).subscribe((res: any) => {
       this.data = res;
+    },(error: any)=>{
+
+      Swal.fire({
+        title: 'Something went wrong',
+        icon: "error",
+        draggable: false,
+      });
+      this.data.table=[];
+
     });
   }
 
@@ -110,12 +125,13 @@ export class InvoiceComponent implements OnInit {
   Action = 'Added';
 
   onSubmitData() {
-    this.tableApi.onSubmitData(this.myDataForm, null, this.insertData.bind(this))
+    this.tableApi.onSubmitData(this.myDataForm, null, this.insertData.bind(this));
+    // console.log('su')
   }
 
 
   insertData(action: string) {
-    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), null, this.preserveField.bind(this), action)
+    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), null, this.preserveField.bind(this), action, 'insertInvoice')
   }
 
   // reset form fileds
@@ -147,30 +163,79 @@ export class InvoiceComponent implements OnInit {
   updateBtn = false;
 
   // Edit data functions
-  async editData(value: any) {
-    try {
-      const [updatedImageUrl, updatedUpdateBtn, updatedDiv] = await this.tableApi.editData(
-        value,
-        this.updateBtn,
-        this.imageUrl,
-        this.imageDiv,
-        this.myDataForm,
-        'invoice_master',
-        'id',
-        null
-      );
+  editData(value: any) {
+    this.updateBtn = true;
 
-      // Update the component properties with the returned values
-      this.imageUrl = updatedImageUrl;
-      this.updateBtn = updatedUpdateBtn;
-      this.imageDiv = updatedDiv;
+    this.myDataForm.controls['action'].setValue('update');
+    this.myDataForm.controls['table'].setValue('invoice_master');
 
-      console.log('Updated imageUrl:', this.imageUrl);
-      console.log('Updated updateBtn:', this.updateBtn);
-      console.log('Updated updateImagediv:', this.imageDiv);
-    } catch (error) {
-      console.error('Error editing data:', error);
+    const formData: any = new FormData();
+    formData.append('id', value);
+    formData.append('table', 'invoice_master');
+    formData.append('key', 'invoice_id');
+
+    this.tableApi.tableApi('insertcontroller', 'edit', formData).subscribe((res: any) => {
+
+      console.log(res, 'invoice edit')
+
+      let data = res.data;
+      let item: [{ invoice_id: string, item_id: string, quantity: string, amount: string, item_name: string, item_price: string }];
+      item = res.item;
+
+      Object.entries(data).forEach(([key, value]) => {
+
+        this.myDataForm.get(key)?.setValue(value)
+
+
+      })
+
+      this.items_container.clear();
+
+      item.map((ele, index) => {
+        this.items_container.push(this.createCloneItemsForm());
+
+        this.items_container.at(index).patchValue({
+          'item_name': ele.item_name,
+          'item_price': ele.item_price,
+          'item_id': ele.item_id,
+          'quantity': 1,
+        })
+        this.calTotal(index)
+
+      })
+
+
+    })
+
+  }
+
+  // calculate total 
+
+  calTotal(i: number) {
+    console.log("cal")
+    let price = this.items_container.at(i).get('item_price')?.getRawValue();
+    let quantity = this.items_container.at(i).get('quantity')?.getRawValue();
+    console.log(price)
+    console.log(quantity)
+
+    let total = price * quantity;
+
+    this.items_container.at(i).get('amount')?.setValue(total.toString());
+
+    let sum = 0;
+
+    for (let j = 0; j < this.items_container.length; j++) {
+
+      let price_all = this.items_container.at(j).get('item_price')?.getRawValue();
+      let quantity_all = this.items_container.at(j).get('quantity')?.getRawValue();
+
+      let total_all = price_all * quantity_all;
+
+      sum += total_all;
+
     }
+    this.myDataForm.get('total_amount')?.setValue(sum.toString());
+
   }
 
   // Delete data function 
@@ -196,14 +261,9 @@ export class InvoiceComponent implements OnInit {
 
   myDataForm = new FormGroup({
     invoice_number: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(40), Validators.pattern(/^[a-zA-Z0-9 ]+$/)]),
-    invoice_date: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    invoice_date: new FormControl('', [Validators.required]),
     total_amount: new FormControl('', [Validators.required, Validators.pattern(/^[0-9.]+$/)]),
     NAME: new FormControl('', [Validators.required]),
-    item_id: new FormControl('', [Validators.required, Validators.pattern(/^[0-9.]+$/)]),
-    item_name: new FormControl('', [Validators.required]),
-    item_price: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]+$/)]),
-    quantity: new FormControl('', [Validators.required, Validators.pattern(/^[0-9.]+$/)]),
-    amount: new FormControl('', [Validators.required, Validators.pattern(/^[0-9.]+$/)]),
     email: new FormControl('', [Validators.required, Validators.email]),
     phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]),
     client_id: new FormControl('', [Validators.required]),
@@ -242,6 +302,7 @@ export class InvoiceComponent implements OnInit {
     if (this.items_container.length > 1) {
       this.items_container.removeAt(index);
     }
+    this.calTotal(0);
   }
 
 

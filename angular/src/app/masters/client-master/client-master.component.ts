@@ -10,7 +10,7 @@ import { HttpResponse } from '@angular/common/http';
 
 interface tableData {
   id: string,
-  name: string,
+  NAME: string,
   phone: string,
   email: string,
   address: string,
@@ -34,7 +34,7 @@ interface responseData {
 export class ClientMasterComponent {
 
   // all table data
-  data: responseData = { table: [{ id: '', name: '', phone: '', email: '', address: '', state: '', district: '', pincode: '' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
+  data: responseData = { table: [{ id: '', NAME: '', phone: '', email: '', address: '', state: '', district: '', pincode: '' }], pagination: { totalPages: 1, current_page_opened: 1 }, query: '' };
 
   // bootstrapTab change function 
   activeTab: string = 'search';
@@ -59,9 +59,22 @@ export class ClientMasterComponent {
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
+
+
   getData() {
-    this.tableApi.tableApi('tablecontroller', '', this.myLiveForm.value).subscribe((res: any) => {
+    const formData = new FormData();
+
+    formData.append('data', JSON.stringify(this.myLiveForm.value));
+
+    this.tableApi.tableApi('Client_Master_Controller', 'client_table', formData).subscribe((res: any) => {
       this.data = res;
+    }, (error: any) => {
+      Swal.fire({
+        title: 'Something went wrong',
+        icon: "error",
+        draggable: false,
+      });
+      this.data.table=[];
     });
   }
 
@@ -99,12 +112,12 @@ export class ClientMasterComponent {
   Action = 'Added';
 
   onSubmitData() {
-    this.tableApi.onSubmitData(this.myDataForm,this.imageUrl , this.insertData.bind(this))
+    this.tableApi.onSubmitData(this.myDataForm, this.imageUrl, this.insertData.bind(this))
   }
 
 
-  insertData(action:string) {
-    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),null,this.preserveField.bind(this),action)
+  insertData(action: string) {
+    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), null, this.preserveField.bind(this), action,'insert_client_data','Client_Master_Controller','update_client_data');
   }
 
 
@@ -114,7 +127,7 @@ export class ClientMasterComponent {
   }
 
   numberOnly(event: any): boolean {
-   return this.tableApi.numberOnly(event);
+    return this.tableApi.numberOnly(event);
 
   }
 
@@ -131,7 +144,10 @@ export class ClientMasterComponent {
         this.myDataForm,
         'client_master',
         'id',
-        this.getDistrict.bind(this)
+        this.getDistrict.bind(this),
+        '',
+        'Client_Master_Controller',
+        'client_edit'
       );
 
       // Update the component properties with the returned values
@@ -196,10 +212,16 @@ export class ClientMasterComponent {
 
   // state function
   state() {
-    this.tableApi.tableApi('tablecontroller', 'state', "").subscribe((res: any) => {
+    this.tableApi.tableApi('Client_Master_Controller', 'state_master_option', "").subscribe((res: any) => {
       this.stateArray.pop();
       this.stateArray = res.state;
-    })
+    }, (error: any) => {
+      Swal.fire({
+        title: 'Unable to get state',
+        icon: "error",
+        draggable: false,
+      });
+    });
   }
 
   districtArray = [{ district_id: 1, district_name: '' }];
@@ -211,11 +233,17 @@ export class ClientMasterComponent {
 
     formData.append('state_id', stateId);
 
-    this.tableApi.tableApi('dropdowncontroller', 'district', formData).subscribe((res: any) => {
+    this.tableApi.tableApi('Client_Master_Controller', 'district_master_option', formData).subscribe((res: any) => {
       console.log(res);
       this.districtArray.pop();
       this.districtArray = res.district_options;
-    })
+    }, (error: any) => {
+      Swal.fire({
+        title: 'Unable to get district data',
+        icon: "error",
+        draggable: false,
+      });
+    });
 
   }
 

@@ -151,21 +151,22 @@
                     <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
                         <label for="invoiceDateId" class="form-label">Invoice Date <span
                                 class="text-danger">*</span></label>
-                        <input type="text" id="invoiceDateId" formControlName="invoice_date"
-                            class="form-control form-control-sm"  >
-                            <app-form-validation [Form]="myDataForm" fieldName="invoice_date" />
-                        </div>
-                        
-                        <div class="row mb-3">
-                            
-                            <input type="hidden" formControlName="client_id" [readOnly]="true">
-                            
-                            <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
-                                <label for="clientNameId" class="form-label">Client name <span
+                        <input type="date" id="invoiceDateId" formControlName="invoice_date"
+                            class="form-control form-control-sm">
+                        <app-form-validation [Form]="myDataForm" fieldName="invoice_date" />
+                    </div>
+
+                    <div class="row mb-3">
+
+                        <input type="hidden" formControlName="client_id" [readOnly]="true">
+
+                        <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
+                            <label for="clientNameId" class="form-label">Client name <span
                                     class="text-danger">*</span></label>
-                                    <input type="text" id="clientNameId" formControlName="NAME"
-                                    class="form-control form-control-sm"  #clientName>
-                                    <app-autocomplete  [clientName]="clientName.value"  ></app-autocomplete>
+                            <input type="text" id="clientNameId" formControlName="NAME"
+                                class="form-control form-control-sm" #clientName>
+                            <app-autocomplete [clientName]="clientName.value" [formGroup]="myDataForm"
+                                methodName="client_autocomplete" autoCompleteFor="client"></app-autocomplete>
                             <app-form-validation [Form]="myDataForm" fieldName="NAME" />
                         </div>
 
@@ -193,7 +194,7 @@
                             <app-form-validation [Form]="myDataForm" fieldName="address" />
                         </div>
 
- 
+
                     </div>
 
                     <hr>
@@ -211,10 +212,14 @@
                                 <label for="itemNameId" class="form-label">Item name <span
                                         class="text-danger">*</span></label>
                                 <input type="text" id="itemNameId" formControlName="item_name"
-                                    class="form-control form-control-sm" >
+                                    class="form-control form-control-sm" #itemName>
+                                <app-autocomplete [clientName]="itemName.value" [formGroup]="$any(item)"
+                                    methodName="item_autocomplete" autoCompleteFor="item"
+                                    [calculateFun]='calTotal.bind(this)'>
+                                </app-autocomplete>
                                 <app-form-validation [Form]="$any(item)" fieldName="item_name" />
-                                
-                                
+
+
                             </div>
 
 
@@ -230,8 +235,9 @@
                             <div class="col-md-2 col-xl-2 col-sm-6 col-xs-6 mb-3">
                                 <label for="itemQuantityId" class="form-label">Quantity <span
                                         class="text-danger">*</span></label>
-                                <input type="number" id="itemQuantityId" formControlName="quantity"
-                                    (keypress)="numberOnly($event)" class="form-control form-control-sm">
+                                <input type="number" id="itemQuantityId" (input)="calTotal(i)"
+                                    formControlName="quantity" (keypress)="numberOnly($event)"
+                                    class="form-control form-control-sm" min="1">
                                 <app-form-validation [Form]="$any(item)" fieldName="quantity" />
                             </div>
 
@@ -258,7 +264,16 @@
                         </button>
                     </div>
 
+                    <div class="mb-3">
 
+                        <label for="totalAmountId" class="form-label">Total amount <span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="totalAmountId" formControlName="total_amount"
+                            class="form-control form-control-sm bg-light" (keypress)="decimalNumberOnly($event)"
+                            readonly>
+                        <app-form-validation [Form]="myDataForm" fieldName="total_amount" />
+
+                    </div>
 
 
                     <input type="hidden" formControlName="table" value="invoice_master">

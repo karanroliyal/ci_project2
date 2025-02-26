@@ -5,28 +5,33 @@ Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
 Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 
-class DropdownModel extends CI_Model{
+class DropdownModel extends CI_Model
+{
 
-    function client($clientName){
+    function client($clientName)
+    {
 
         $this->db->like($clientName);
 
         $result = $this->db->get('client_master')->result();
 
         return json_encode(['object' => $result]);
-
     }
 
-    function item($itemName){
+    function item($itemName)
+    {
 
-        if(isset($itemName['arrId'])){
-            $arrId = $_POST['arrId'];
+        if (isset($itemName['arrId'])) {
+            $arrId = json_decode($_POST['arrId'], true); // Convert JSON string to array
     
-        $ids = implode(" ," ,$arrId);
-
-            $this->db->where_not_in('id', $ids);
+            if (!is_array($arrId)) {
+                $arrId = []; // Ensure $arrId is an array
+            }
+    
+            $ids = implode(",", $arrId); // Now it will work correctly
+    
+            $this->db->where_not_in('id', explode(",", $ids)); // Ensure proper format
             unset($itemName['arrId']);
-            
         }
 
         $this->db->like($itemName);
@@ -34,14 +39,14 @@ class DropdownModel extends CI_Model{
         $result = $this->db->get('item_master')->result();
 
         return json_encode(['object' => $result]);
-
     }
 
-    public function district($state_id){
+    public function district($state_id)
+    {
 
         $this->db->select('district_id');
         $this->db->select('district_name');
-        $this->db->where('state_id' , $state_id['state_id']);
+        $this->db->where('state_id', $state_id['state_id']);
         $query = $this->db->get('district_master');
 
 
@@ -54,24 +59,5 @@ class DropdownModel extends CI_Model{
         // }
 
         echo json_encode(['district_options' => $query->result_array()]);
-
-        
-
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

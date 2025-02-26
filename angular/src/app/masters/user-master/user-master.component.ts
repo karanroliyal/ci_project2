@@ -5,6 +5,7 @@ import { ValidationModule } from "../../validation/validation.module";
 import { FormValidationComponent } from "../../validation/form-validation/form-validation.component";
 import { ApiService } from '../../api.service';
 import { NgClass } from '@angular/common';
+import Swal from 'sweetalert2';
 
 interface tableData {
   id: string,
@@ -64,9 +65,21 @@ export class UserMasterComponent implements OnInit {
   Total_pages = this.data.pagination.current_page_opened;
 
   getData() {
-    this.tableApi.tableApi('tablecontroller', '', this.myLiveForm.value).subscribe((res: any) => {
+
+    const formData = new FormData();
+
+    formData.append('data' ,JSON.stringify(this.myLiveForm.value) );
+
+    this.tableApi.tableApi('User_Master_Controller', 'User_table', formData).subscribe((res: any) => {
       this.data = res;
-    });
+    }, (error: any) => {
+          Swal.fire({
+            title: 'Something went wrong',
+            icon: "error",
+            draggable: false,
+          });
+          this.data.table=[];
+        });
   }
 
 
@@ -118,7 +131,7 @@ export class UserMasterComponent implements OnInit {
 
 
   insertData(action:string) {
-    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),this.file,this.preserveField.bind(this),action)
+    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),this.file,this.preserveField.bind(this),action ,'Insert_user_data','User_Master_Controller','Update_user_data');
   }
 
   // reset form fileds
@@ -140,7 +153,10 @@ export class UserMasterComponent implements OnInit {
         this.myDataForm,
         'user_master',
         'id',
-        null
+        null,
+        '',
+        'User_Master_Controller',
+        'user_edit'
       );
   
       // Update the component properties with the returned values
@@ -158,7 +174,7 @@ export class UserMasterComponent implements OnInit {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value ,this.getData.bind(this) , 'id' , 'user_master')
+    this.tableApi.deleteData(value ,this.getData.bind(this) , 'id' , 'user_master' , 'User_Master_Controller', 'user_delete' )
   }
 
   showError(error: any) {

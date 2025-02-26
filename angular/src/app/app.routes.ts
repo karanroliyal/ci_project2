@@ -6,7 +6,7 @@ export const routes: Routes = [
 
     {
         path:'',
-        redirectTo:'dash',
+        redirectTo:'/dash/dashboard',
         pathMatch:'full'
     },
     {

@@ -103,7 +103,7 @@
                             <td>{{items.email}}</td>
                             <td>{{items.phone}}</td>
                             <td class="text-center"><img width="30px"
-                                    src="http://localhost/ci_project2/profiles/{{items.image}}" /></td>
+                                    src="http://localhost/ci_project2/api/profiles/{{items.image}}" /></td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-center">
                                     <button #editBtn value={{items.id}}
@@ -118,7 +118,7 @@
                         </tr>
                         }@empty {
                         <tr>
-                            <td colspan="6" class="text-center">
+                            <td colspan="7" class="text-center">
                                 <h6>No record Found</h6>
                             </td>
                         </tr>
@@ -193,8 +193,6 @@
                     </div>
 
 
-                    <input type="hidden" formControlName="table" value="user_master">
-                    <input type="hidden" formControlName="uploadImage">
                     <input type="hidden" formControlName="id">
                     <input type="hidden" formControlName="action">
 

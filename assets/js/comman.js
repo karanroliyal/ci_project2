@@ -729,7 +729,6 @@ $(document).on("click", "#editBtn", function () {
 			let text = $("#nav-profile-tab").text();
 			let Update_text = text.replace("Add", "Update");
 			$("#nav-profile-tab").text(Update_text);
-			// console.log(text);
 		},
 	});
 });

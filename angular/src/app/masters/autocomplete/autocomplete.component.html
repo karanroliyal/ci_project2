@@ -1,7 +1,29 @@
 <!-- {{clientName()}} -->
 
-@for(items of options() ; track $index){
+@if(optionVisible == true){
 
-  <option onclick="" class="w-100 bg-dark text-light p-1" [value]='items.id'>{{items.NAME}}</option>
+
+  @for(items of options() ; track $index){
+   
+    @if(autoCompleteFor == 'client'){
+      <option (click)="myId(clientval.value)" #clientval class="w-100 bg-dark text-light p-1 autocomplete-option" [value]='items.id'>{{items.NAME}}</option>
+    }
+    @else{
+      <option (click)="myId(clientval.value)" #clientval class="w-100 bg-dark text-light p-1 autocomplete-option" [value]='items.id'>{{items.item_name}}</option>
+    }
   
+  }
+
 }
+
+
+
+
+
+
+
+
+
+
+  
+

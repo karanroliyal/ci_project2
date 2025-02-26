@@ -104,7 +104,7 @@
                         <tr>
                             <td>{{$index+1}}</td>
                             <td>{{items.id}}</td>
-                            <td>{{items.name}}</td>
+                            <td>{{items.NAME}}</td>
                             <td>{{items.email}}</td>
                             <td>{{items.phone}}</td>
                             <td >{{items.address}}</td>
@@ -199,7 +199,7 @@
                                    <option value={{district.district_id}}>{{district.district_name}}</option> 
                             }
                         </select>
-                        <app-form-validation [Form]="myDataForm" fieldName="state" [maxLength]="10" />
+                        <app-form-validation [Form]="myDataForm" fieldName="district" [maxLength]="10" />
 
                     </div>
 
