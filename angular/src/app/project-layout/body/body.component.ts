@@ -10,6 +10,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
       <app-nav-bar />
 
       <app-sidebar />
+
     </div>
   `,
   styles: `
@@ -23,4 +24,4 @@ position: relative;
   
   `,
 })
-export class BodyComponent {}
+export class BodyComponent { }

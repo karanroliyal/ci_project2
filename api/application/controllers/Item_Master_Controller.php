@@ -11,6 +11,12 @@ class Item_Master_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->model('item_master_model');
+        // Uploading image here 
+        $config['upload_path'] = './items';
+        $config['allowed_types'] = 'jpg|png|gif|jpeg';
+        $config['encrypt_name'] = TRUE;
+
+        $this->load->library('upload', $config);
     }
 
     public function insert_item_data()
@@ -75,12 +81,7 @@ class Item_Master_Controller extends CI_Controller{
 
             // echo 'Validated';
 
-            // Uploading image here 
-            $config['upload_path'] = './items';
-            $config['allowed_types'] = 'jpg|png|gif|jpeg';
-            $config['encrypt_name'] = TRUE;
-
-            $this->load->library('upload', $config);
+            
 
             if ($this->upload->do_upload('image')) {
 
@@ -168,12 +169,6 @@ class Item_Master_Controller extends CI_Controller{
 
         if ($this->form_validation->run()) {
 
-            // Uploading image here 
-            $config['upload_path'] = './items';
-            $config['allowed_types'] = 'jpg|png|gif|jpeg';
-            $config['encrypt_name'] = TRUE;
-
-            $this->load->library('upload', $config);
 
             if ($_FILES) {
                 if ($this->upload->do_upload('image')) {

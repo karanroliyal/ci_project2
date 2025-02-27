@@ -12,6 +12,12 @@ class User_Master_Controller extends CI_Controller
     {
         parent::__construct();
         $this->load->model('user_master_model');
+        // Uploading image here 
+        $config['upload_path'] = './profiles';
+        $config['allowed_types'] = 'jpg|png|gif|jpeg';
+        $config['encrypt_name'] = TRUE;
+
+        $this->load->library('upload', $config);
     }
 
 
@@ -84,12 +90,7 @@ class User_Master_Controller extends CI_Controller
 
             // echo 'Validated';
 
-            // Uploading image here 
-            $config['upload_path'] = './profiles';
-            $config['allowed_types'] = 'jpg|png|gif|jpeg';
-            $config['encrypt_name'] = TRUE;
-
-            $this->load->library('upload', $config);
+            
 
             if ($this->upload->do_upload('image')) {
 
@@ -185,12 +186,6 @@ class User_Master_Controller extends CI_Controller
 
         if ($this->form_validation->run()) {
 
-            // Uploading image here 
-            $config['upload_path'] = './profiles';
-            $config['allowed_types'] = 'jpg|png|gif|jpeg';
-            $config['encrypt_name'] = TRUE;
-
-            $this->load->library('upload', $config);
 
             if ($_FILES) {
                 if ($this->upload->do_upload('image')) {

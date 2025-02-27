@@ -8,14 +8,66 @@
             aria-controls="nav-profile" aria-selected="false">Add invoice</button>
     </div>
 </nav>
+
 <div class="tab-content" id="nav-tabContent">
     <!-- // Table container -->
+
     <div class="tab-pane fade" id="search" [ngClass]="{ 'show active': activeTab === 'search' }" role="tabpanel"
         aria-labelledby="home-tab">
 
         <div class="row mx-0 mt-2">
 
             <div class="col-12 mb-4">
+                <!-- Modal -->
+                <div class="modal fade " id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content bg-white">
+                            <div class="modal-header bg-white">
+                                <h5 class="modal-title" id="exampleModalLabel">Mail</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body bg-white">
+
+                                <form [formGroup]="myMailForm">
+
+                                    <input type="hidden" formControlName="invoice_id">
+
+                                    <div class="mb-3">
+
+                                        <label for="clientNameId" class="form-label">Client name</label>
+                                        <input type="text" id="clientNameId" formControlName="name"
+                                            class="form-control form-control-sm">
+                                        <app-form-validation [Form]="this.myMailForm" fieldName="name" />
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label for="clientEmailId" class="form-label">Client email</label>
+                                        <input type="text" id="clientEmailId" formControlName="email"
+                                            class="form-control form-control-sm"  [readOnly]="true">
+                                        <app-form-validation [Form]="this.myMailForm" fieldName="email" />
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label for="messageId" class="form-label">Message</label>
+                                        <textarea type="text" id="messageId" formControlName="message"
+                                            class="form-control form-control-sm" [rows]="5"></textarea>
+                                        <app-form-validation [Form]="this.myMailForm" fieldName="message" />
+                                    </div>
+
+                                </form>
+
+                            </div>
+                            <div class="modal-footer bg-white">
+                                <button type="button" (click)="sendMail()" class="btn btn-primary">Send mail</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Model  -->
 
                 <form [formGroup]="myLiveForm" id="myForm">
                     <div class="px-2 row bg-light rounded pt-4 pb-4">
@@ -60,8 +112,6 @@
                 </div>
                 <app-paggination [formName]="myLiveForm" [pages_total]="this.data.pagination.totalPages"
                     [page_open]="this.data.pagination.current_page_opened" [callTable]="getData.bind(this)" />
-                <!-- <h1>{{data.pagination.totalPages}}</h1>
-                <h1>{{data.pagination.current_page_opened}}</h1> -->
 
             </div>
 
@@ -95,10 +145,17 @@
                             <td>{{items.email}}</td>
                             <td>{{items.phone}}</td>
                             <td>₹{{items.total_amount}}</td>
-                            <td class="text-center"><a target="_blank"
-                                    href="http://localhost/ci_project2/pdfcontroller?myId={{items.invoice_id}}"><i
-                                        class="bi text-danger bi-file-earmark-pdf-fill"></i></a></td>
-                            <td class="text-center"><i class="bi text-info bi-envelope-paper-fill"></i></td>
+                            <td class="text-center">
+                                <a target="_blank"
+                                    href="http://localhost/ci_project2/api/PDF_Controller/view_pdf?myId={{items.invoice_id}}"><i
+                                        class="bi text-danger bi-file-earmark-pdf-fill"></i></a>
+                            </td>
+                            <td class="text-center">
+                                <button data-bs-toggle="modal" #mailId (click)="mailData(mailId.value , items.invoice_id)"
+                                    value={{items.client_id}} data-bs-target="#exampleModal"
+                                    class="bi bg-white btn btn-sm text-info bi-envelope-paper-fill">
+                                </button>
+                            </td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-center">
                                     <button #editBtn value={{items.invoice_id}}
@@ -126,7 +183,6 @@
         </div>
 
 
-
     </div>
 
     <!-- // form container -->
@@ -135,17 +191,18 @@
 
         <div class="px-4 mt-2 bg-light pt-4 pb-4 rounded">
 
-
             <form [formGroup]="myDataForm" id="myDataFormUser">
                 <div class="row">
 
+                    <!-- <input type="hidden" formControlName="invoice_id" [readOnly]="true" > -->
 
                     <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
                         <label for="invoice_numberId" class="form-label">Invoice Number <span
                                 class="text-danger">*</span></label>
                         <input type="text" id="invoice_numberId" formControlName="invoice_number"
-                            class="form-control form-control-sm">
-                        <app-form-validation [Form]="myDataForm" fieldName="invoice_number" />
+                            class="form-control form-control-sm" maxlength="10">
+                        <app-form-validation [Form]="myDataForm" fieldName="invoice_number" [minLength]="3"
+                            [maxLength]="10" />
                     </div>
 
                     <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
@@ -164,10 +221,12 @@
                             <label for="clientNameId" class="form-label">Client name <span
                                     class="text-danger">*</span></label>
                             <input type="text" id="clientNameId" formControlName="NAME"
-                                class="form-control form-control-sm" #clientName>
+                                class="form-control form-control-sm" #clientName
+                                (input)="clearClientValue(clientName.value)" maxlength="40">
                             <app-autocomplete [clientName]="clientName.value" [formGroup]="myDataForm"
                                 methodName="client_autocomplete" autoCompleteFor="client"></app-autocomplete>
-                            <app-form-validation [Form]="myDataForm" fieldName="NAME" />
+                            <app-form-validation [Form]="myDataForm" fieldName="NAME" [minLength]="3"
+                                [maxLength]="40" />
                         </div>
 
                         <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
@@ -183,7 +242,8 @@
                                     class="text-danger">*</span></label>
                             <input type="text" id="client_phoneId" formControlName="phone" [readOnly]="true"
                                 class="form-control form-control-sm bg-light">
-                            <app-form-validation [Form]="myDataForm" fieldName="phone" />
+                            <app-form-validation [Form]="myDataForm" fieldName="phone" [minLength]="10"
+                                [maxLength]="10" />
                         </div>
 
                         <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
@@ -212,22 +272,24 @@
                                 <label for="itemNameId" class="form-label">Item name <span
                                         class="text-danger">*</span></label>
                                 <input type="text" id="itemNameId" formControlName="item_name"
-                                    class="form-control form-control-sm" #itemName>
+                                    class="form-control form-control-sm" #itemName
+                                    (input)="clearItemsValue(itemName.value , i)">
                                 <app-autocomplete [clientName]="itemName.value" [formGroup]="$any(item)"
                                     methodName="item_autocomplete" autoCompleteFor="item"
                                     [calculateFun]='calTotal.bind(this)'>
                                 </app-autocomplete>
-                                <app-form-validation [Form]="$any(item)" fieldName="item_name" />
+                                <app-form-validation [Form]="$any(item)" fieldName="item_name" [minLength]="3"
+                                    [maxLength]="40" />
 
 
                             </div>
 
 
                             <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
-                                <label for="itemPriceId" class="form-label">Item price <span
+                                <label for="itemPriceId" class="form-label">Item price (₹) <span
                                         class="text-danger">*</span></label>
                                 <input type="text" id="itemPriceId" formControlName="item_price"
-                                    class="form-control form-control-sm bg-light"
+                                    class="form-control form-control-sm bg-light text-end"
                                     (keypress)="decimalNumberOnly($event)">
                                 <app-form-validation [Form]="$any(item)" fieldName="item_price" />
                             </div>
@@ -237,15 +299,15 @@
                                         class="text-danger">*</span></label>
                                 <input type="number" id="itemQuantityId" (input)="calTotal(i)"
                                     formControlName="quantity" (keypress)="numberOnly($event)"
-                                    class="form-control form-control-sm" min="1">
+                                    class="form-control form-control-sm text-end" min="1">
                                 <app-form-validation [Form]="$any(item)" fieldName="quantity" />
                             </div>
 
                             <div class="col-md-3 col-xl-3 col-sm-6 col-xs-6 mb-3">
-                                <label for="itemQuantityId" class="form-label">Amount <span
+                                <label for="itemQuantityId" class="form-label">Amount (₹) <span
                                         class="text-danger">*</span></label>
                                 <input type="text" id="itemQuantityId" formControlName="amount"
-                                    class="form-control form-control-sm bg-light"
+                                    class="form-control form-control-sm bg-light text-end"
                                     (keypress)="decimalNumberOnly($event)">
                                 <app-form-validation [Form]="$any(item)" fieldName="amount" />
                             </div>
@@ -266,11 +328,11 @@
 
                     <div class="mb-3">
 
-                        <label for="totalAmountId" class="form-label">Total amount <span
+                        <label for="totalAmountId" class="form-label">Total amount (₹) <span
                                 class="text-danger">*</span></label>
                         <input type="text" id="totalAmountId" formControlName="total_amount"
-                            class="form-control form-control-sm bg-light" (keypress)="decimalNumberOnly($event)"
-                            readonly>
+                            class="form-control form-control-sm bg-light text-end"
+                            (keypress)="decimalNumberOnly($event)" readonly>
                         <app-form-validation [Form]="myDataForm" fieldName="total_amount" />
 
                     </div>

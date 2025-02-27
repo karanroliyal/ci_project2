@@ -47,7 +47,6 @@ export class AutocompleteComponent {
 
     let arrayId: number[]  = []
 
-    
     let  formData = new FormData();
     if(this.autoCompleteFor == 'client'){
       formData.append('name' , this.clientName())
