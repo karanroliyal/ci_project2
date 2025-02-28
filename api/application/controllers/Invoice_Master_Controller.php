@@ -1,8 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 
 class Invoice_Master_Controller extends CI_Controller
@@ -26,6 +23,8 @@ class Invoice_Master_Controller extends CI_Controller
         $result = $this->invoice_master_model->invoice_master_table($_POST);
 
         echo $result;
+        return;
+
     }
 
     public function client_autocomplete()
@@ -36,6 +35,8 @@ class Invoice_Master_Controller extends CI_Controller
         $result =  $this->invoice_master_model->client_autocomplete_model($searchString);
 
         echo  json_encode(['object' => $result]);
+        return;
+
     }
 
 
@@ -47,6 +48,7 @@ class Invoice_Master_Controller extends CI_Controller
         $result =  $this->invoice_master_model->item_autocomplete_model($searchString);
 
         echo  json_encode(['object' => $result]);
+        return;
     }
 
     public function invoice_edit()
@@ -58,9 +60,11 @@ class Invoice_Master_Controller extends CI_Controller
 
         if ($result !== null) {
             echo $result;
+            return;
         } else {
             $error = ['error' => 'Invalid id'];
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -121,10 +125,12 @@ class Invoice_Master_Controller extends CI_Controller
             if($result){
 
                 echo json_encode(['statusCode'=>201 , 'status'=>'success']);
+                return;
 
             }else{
 
                 echo json_encode(['statusCode'=>401 , 'status'=>'fail']);
+                return;
 
             }
             
@@ -133,6 +139,7 @@ class Invoice_Master_Controller extends CI_Controller
             $error = $this->form_validation->error_array();
 
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -195,10 +202,12 @@ class Invoice_Master_Controller extends CI_Controller
             if($result){
 
                 echo json_encode(['statusCode'=>201 , 'status'=>'success']);
+                return;
 
             }else{
 
                 echo json_encode(['statusCode'=>401 , 'status'=>'fail']);
+                return;
 
             }
             
@@ -207,6 +216,7 @@ class Invoice_Master_Controller extends CI_Controller
             $error = $this->form_validation->error_array();
 
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -215,6 +225,7 @@ class Invoice_Master_Controller extends CI_Controller
         $result = $this->invoice_master_model->generate_last_invoice_number();
 
         echo json_encode($result);
+        return;
 
     }
 
@@ -226,6 +237,26 @@ class Invoice_Master_Controller extends CI_Controller
         $result = $this->invoice_master_model->client_details_for_mail($clientId);
 
         echo json_encode($result);
+        return;
+
+    }
+
+    public function invoice_master_record_delete(){
+
+        $invoiceId = $_POST['deleteid'];
+
+        // echo $invoiceId;die;
+
+        $result =  $this->invoice_master_model->delete_invoice($invoiceId);
+
+        if($result !== 0){
+            echo json_encode(['statusCode'=>200 , 'status'=>'success']);
+            return;
+        }else{
+            $error = ['error'=>'Invalid id'];
+            echo json_encode(['statusCode'=>400 , 'status'=>$error]);
+            return;
+        }
 
     }
 

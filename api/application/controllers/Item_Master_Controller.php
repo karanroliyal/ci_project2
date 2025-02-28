@@ -1,11 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 
-class Item_Master_Controller extends CI_Controller{
+class Item_Master_Controller extends CI_Controller
+{
 
     public function __construct()
     {
@@ -28,11 +26,7 @@ class Item_Master_Controller extends CI_Controller{
 
 
         // unseting all unrequired fileds
-        unset($_POST['table']);
-        unset($_POST['id']);
-        unset($_POST['action']);
-        unset($_POST['image']);
-        unset($_POST['uploadImage']);
+        $_POST = $this->unset_unwanted_data->unset_data($_POST);
 
 
         // getting image data into $Files
@@ -79,21 +73,19 @@ class Item_Master_Controller extends CI_Controller{
 
         if ($this->form_validation->run()) {
 
-            // echo 'Validated';
-
-            
 
             if ($this->upload->do_upload('image')) {
 
                 $imageData = $this->upload->data(); // getting image all data 
                 $_POST['image'] = $imageData['file_name'];
             } else {
+
                 $error = $this->upload->display_errors();
 
                 $error = json_encode(['error' => 'Ivalid image format']);
 
                 echo   json_encode(['error' => $error]);
-                die;
+                return;
             }
 
             $result = $this->item_master_model->item_insert_db($_POST);
@@ -101,14 +93,17 @@ class Item_Master_Controller extends CI_Controller{
             if ($result) {
 
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
+                return;
             } else {
 
                 echo json_encode(['statusCode' => 401, 'status' => 'fail']);
+                return;
             }
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -124,11 +119,7 @@ class Item_Master_Controller extends CI_Controller{
         $userId =   $_POST['id'];
 
         // unseting all unrequired fileds
-        unset($_POST['table']);
-        unset($_POST['id']);
-        unset($_POST['action']);
-        unset($_POST['image']);
-        unset($_POST['uploadImage']);
+        $_POST = $this->unset_unwanted_data->unset_data($_POST);
 
         // getting image data into $Files
         if ($_FILES) {
@@ -181,26 +172,28 @@ class Item_Master_Controller extends CI_Controller{
                     $error = ['error' => 'Invalid image format'];
 
                     echo   json_encode(['error' => $error]);
-                    die;
+                    return;
                 }
             }
 
             $result = $this->item_master_model->item_update_db($_POST, $userId);
 
-            // echo $result ; die;
 
             if ($result == 1) {
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
+                return;
             } else {
                 if ($result['dupliacteItem'] !== 0) {
                     $error = ['error' => 'Item is already exists'];
                     echo  json_encode(['error' => $error]);
+                    return;
                 }
             }
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -212,6 +205,8 @@ class Item_Master_Controller extends CI_Controller{
         $result = $this->item_master_model->item_master_table($_POST);
 
         echo $result;
+        return;
+
     }
 
     public function item_edit()
@@ -223,9 +218,11 @@ class Item_Master_Controller extends CI_Controller{
 
         if ($result !== null) {
             echo $result;
+            return;
         } else {
             $error = ['error' => 'Invalid id'];
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -236,15 +233,15 @@ class Item_Master_Controller extends CI_Controller{
 
         $result =  $this->item_master_model->item_master_delete($deleteUserId);
 
-        if($result !== 0){
-            echo json_encode(['statusCode'=>200 , 'status'=>'success']);
-        }else{
-            $error = ['error'=>'Invalid id'];
-            echo json_encode(['statusCode'=>400 , 'status'=>$error]);
+        if ($result !== 0) {
+            echo json_encode(['statusCode' => 200, 'status' => 'success']);
+            return;
+        } else {
+            $error = ['error' => 'Invalid id'];
+            echo json_encode(['statusCode' => 400, 'status' => $error]);
+            return;
         }
-
-
     }
 
-
+    
 }

@@ -32,7 +32,7 @@ export class AutocompleteComponent {
 
   constructor(private api: ApiService) {
     effect(() => {
-      if (this.clientName().length) {
+      if (this.clientName().length ) {
         this.change();
       }
       if (this.clientName() == "") {

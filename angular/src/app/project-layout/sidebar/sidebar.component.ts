@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet , Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink , RouterOutlet , RouterLinkActive],
+  imports: [RouterLink, RouterOutlet, RouterLinkActive],
   template: `
     <div class="sidebar-content-wrapper row mx-0">
       <div class="sidebar-wrapper  col-md-2 col-xl-2 col-sm-2">
@@ -27,7 +27,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
           </div>
 
           <a class="logout-btn-sidebar sidebar-btn bg-danger text-light"
-            href="">
+          (click)="logout()">
             <i class="bi bi-box-arrow-in-left"></i> Logout
           </a>
         </div>
@@ -73,6 +73,7 @@ height: calc(100vh - 45px);
     }
     .logout-btn-sidebar{
         margin-top: auto;
+        cursor:pointer
     }
     .sidebar-btn:hover {
         background-color: #cdeafc;
@@ -96,4 +97,15 @@ height: calc(100vh - 45px);
   
   `,
 })
-export class SidebarComponent { }
+export class SidebarComponent {
+
+  private router = inject(Router);
+
+  logout(){
+
+    this.router.navigate(['/login'])
+    localStorage.setItem('secure_token','');
+
+  }
+
+ }

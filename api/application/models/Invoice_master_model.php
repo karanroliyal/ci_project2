@@ -7,30 +7,27 @@ class Invoice_master_model extends CI_Model
     public function invoice_master_table($liveData)
     {
 
-        $sortOn = $liveData['sortOn'];
-        $sortOrder = $liveData['sortOrder'];
-        $pageLimit = $liveData['pageLimit'];
-        $currentPage = $liveData['currentPage'];
+        $table_value = json_decode($this->table_data->table_controls($liveData));
 
         $liveDataArray = ['invoice_number' => $liveData['invoice_number']];
 
-        $offset = ($currentPage - 1) * $pageLimit;
+        $offset = ($table_value->currentPage - 1) * $table_value->pageLimit;
 
         // for table records 
-        $result = $this->db->order_by($sortOn, $sortOrder);
+        $result = $this->db->order_by($table_value->sortOn, $table_value->sortOrder);
         $result = $this->db->select('invoice_id,invoice_number,invoice_date,NAME,email,phone,total_amount,client_id')->from('invoice_master');
         $result = $this->db->like($liveDataArray);
         $result = $this->db->join('client_master cm', 'cm.id = invoice_master.client_id');
-        $result = $this->db->get('', $pageLimit, $offset);
+        $result = $this->db->get('', $table_value->pageLimit, $offset);
 
 
         // Number of pages 
         $paginationDb = $this->db->from('invoice_master');
         $paginationDb = $this->db->like($liveDataArray);
         $paginationDb = $this->db->get();
-        $pages = ceil($paginationDb->num_rows() / $pageLimit);
+        $pages = ceil($paginationDb->num_rows() / $table_value->pageLimit);
 
-        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $currentPage]]);
+        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $table_value->currentPage]]);
     }
 
     public function client_autocomplete_model($clientName)
@@ -167,6 +164,22 @@ class Invoice_master_model extends CI_Model
         $result = $this->db->get('client_master');
 
         return $result->row();
+
+    }
+
+    public function delete_invoice($invoiceId){
+
+        $this->db->where('invoice_id',$invoiceId);
+        
+        if($this->db->delete('invoice')){
+
+            $this->db->where('invoice_id',$invoiceId);
+           $result =  $this->db->delete('invoice_master');
+           $result = $this->db->affected_rows();
+
+           return $result;
+
+        }
 
     }
 

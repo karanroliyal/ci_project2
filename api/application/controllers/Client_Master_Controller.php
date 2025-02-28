@@ -1,8 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 class Client_Master_Controller extends CI_Controller{
 
@@ -20,11 +17,7 @@ class Client_Master_Controller extends CI_Controller{
         $_POST = json_decode($this->input->post('data'), true);
 
         // unseting all unrequired fileds
-        unset($_POST['table']);
-        unset($_POST['id']);
-        unset($_POST['action']);
-        unset($_POST['image']);
-        unset($_POST['uploadImage']);
+        $_POST = $this->unset_unwanted_data->unset_data($_POST);
 
         $fieldsToValidate = [
 
@@ -67,8 +60,6 @@ class Client_Master_Controller extends CI_Controller{
 
         ];
 
-
-
         $this->form_validation->set_rules($fieldsToValidate);
 
         if ($this->form_validation->run()) {
@@ -78,14 +69,17 @@ class Client_Master_Controller extends CI_Controller{
             if ($result) {
 
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
+                return;
             } else {
 
                 echo json_encode(['statusCode' => 401, 'status' => 'fail']);
+                return ;
             }
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
+            return ;
         }
     }
 
@@ -97,11 +91,7 @@ class Client_Master_Controller extends CI_Controller{
         $userId =   $_POST['id'];
 
         // unseting all unrequired fileds
-        unset($_POST['table']);
-        unset($_POST['id']);
-        unset($_POST['action']);
-        unset($_POST['image']);
-        unset($_POST['uploadImage']);
+        $_POST = $this->unset_unwanted_data->unset_data($_POST);
         
 
         $fieldsToValidate = [
@@ -161,15 +151,18 @@ class Client_Master_Controller extends CI_Controller{
                 if ($result['duplicateEmail'] !== 0) {
                     $error = ['error' => 'Email is already in use'];
                     echo  json_encode(['error' => $error]);
+                    return;
                 } else {
                     $error = ['error' => 'Phone number is already in use'];
                     echo  json_encode(['error' => $error]);
+                    return;
                 }
             }
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -181,7 +174,10 @@ class Client_Master_Controller extends CI_Controller{
 
         $result = $this->client_master_model->client_master_table($_POST);
 
-        echo $result;
+        echo  $result;
+        
+        return;
+
     }
 
     public function client_edit()
@@ -193,9 +189,11 @@ class Client_Master_Controller extends CI_Controller{
 
         if ($result !== null) {
             echo $result;
+            return;
         } else {
             $error = ['error' => 'Invalid id'];
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -208,9 +206,11 @@ class Client_Master_Controller extends CI_Controller{
 
         if($result !== 0){
             echo json_encode(['statusCode'=>200 , 'status'=>'success']);
+            return;
         }else{
             $error = ['error'=>'Invalid id'];
             echo json_encode(['statusCode'=>400 , 'status'=>$error]);
+            return;
         }
 
 
@@ -221,6 +221,7 @@ class Client_Master_Controller extends CI_Controller{
         $result =  $this->client_master_model->state_data();
 
         echo json_encode(['state'=>$result]);
+        return;
 
     }
 
@@ -230,6 +231,7 @@ class Client_Master_Controller extends CI_Controller{
 
         $result = $this->client_master_model->district_data($stateId);
         echo $result;
+        return;
 
     }
 

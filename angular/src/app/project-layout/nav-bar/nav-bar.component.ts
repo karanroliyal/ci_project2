@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { EncryptionComponent } from '../../login-page/encryption/encryption.component';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-nav-bar',
   imports: [],
-  template: 
-  `
+  template:
+    `
   <div class="navigation-wrapper row mx-0">
         <div class="logo-wrapper col-md-2 col-xl-2 col-sm-2 col-xs-2">
           <img width="100%" src="../assets/images/logo.png" />
@@ -12,10 +14,10 @@ import { Component } from '@angular/core';
         <div class="col-md-10 col-xl-10 col-sm-10 navigation-container">
           <i class="bi bi-list toggle-sidebar-btn sidebar-toggle-btn"></i>
           <div class="d-flex align-items-center gap-2">
-            <h6 class="user-name-navigation px-2">heej rawat</h6>
+            <h6 class="user-name-navigation px-2">{{user_name}}</h6>
             <img
               class="user-profile-navigation"
-              src="../assets/images/images.jpg"
+              [src]="profile"
               alt=""
             />
           </div>
@@ -41,6 +43,7 @@ import { Component } from '@angular/core';
         }
         .sidebar-toggle-btn{
             font-size: 20px;
+            cursor: pointer;
         }
         .user-name-navigation{
             margin-bottom: 0px;
@@ -56,6 +59,27 @@ import { Component } from '@angular/core';
   
   `
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnInit {
+
+  constructor(private security: EncryptionComponent) { }
+
+
+  user_name = '';
+  profile = '';
+
+  ngOnInit(): void {
+
+    this.user_name = localStorage.getItem('secure_token') ?? 'User name';
+
+    let data: any = this.security.decrypt(this.user_name);
+
+    data = JSON.parse(data);
+
+    this.user_name = data.name;
+
+    this.profile = `http://localhost/ci_project2/api/profiles/${data.image}`
+
+  }
+
 
 }

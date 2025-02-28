@@ -1,0 +1,37 @@
+<div class="login-wrapper row mx-0 w-100 h-100">
+
+    <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12 form-container">
+
+        <div class="mb-3">
+            <img width="50%" src="../assets/images/logo.png" alt="logo">
+        </div>
+
+        <form [formGroup]="loginForm" >
+
+            <div class="mb-3">
+                <label for="userEmailId" class="form-label">Email</label>
+                <input type="text" id="userEmailId" formControlName="Email" class="form-control form-control-sm" placeholder="Enter your email">
+                <app-form-validation  [Form]="loginForm" fieldName="Email" />
+            </div>
+
+            <div class="mb-3">
+                <label for="userPasswordId" class="form-label">Password </label>
+                <input type="password" id="userPasswordId" formControlName="Password" class="form-control form-control-sm" placeholder="Enter your password">
+                <app-form-validation [Form]="loginForm" fieldName="Password"  />
+            </div>
+
+            <button class="btn btn-primary btn-sm mt-2" (click)="checkLogin()">Login</button>
+
+        </form>
+
+    </div>
+
+
+    <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12">
+
+        <img width="100%" src="../assets/images/login.png" alt="">
+
+
+    </div>
+
+</div>

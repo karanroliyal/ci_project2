@@ -16,6 +16,12 @@ body {
 .table{
     thead{
         white-space: nowrap;
+        user-select: none;
+        cursor: pointer;
+    }
+    td{
+        cursor: pointer;
+        user-select: none;
     }
 }
 

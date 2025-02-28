@@ -1,8 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 class Email_Controller extends CI_Controller
 {
@@ -12,9 +9,20 @@ class Email_Controller extends CI_Controller
 
         $_POST = json_decode($this->input->post('data') , true);
 
-        print_r($_POST);
+        $message = $_POST['message'];
+        $subject = $_POST['subject'];
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $invoice_id = $_POST['invoice_id'];
 
-        die;
+
+        $pdfPath = base_url().'pdfs/generated_pdf_'.$invoice_id.'.pdf';
+
+        // echo $pdfPath; die;
+
+        // print_r($_POST);
+
+        // die;
 
         $this->load->library('email');
 
@@ -35,20 +43,22 @@ class Email_Controller extends CI_Controller
 
         $this->email->initialize($config);
 
-        $this->email->from('karanroliyal12@gmail.com', $mailData['recipient_name']);
-        $this->email->to($mailData['mail_to']);
+        $this->email->from('karanroliyal12@gmail.com');
+        $this->email->to($email , $name);
         
-        $this->email->attach($mailData['pdf_file_path']);
+        $this->email->attach($pdfPath);
 
-        $this->email->subject($mailData['subject']);
-        $this->email->message($mailData['message']);
+        $this->email->subject($subject);
+        $this->email->message($message);
 
         if($this->email->send()){
 
             echo json_encode(['success'=>true]);
+            return;
 
         }else{
             echo json_encode(['success'=>$this->email->print_debugger()]);
+            return;
         }
     }
 

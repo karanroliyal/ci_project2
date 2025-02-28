@@ -1,8 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 
 class User_Master_Controller extends CI_Controller
@@ -19,7 +16,6 @@ class User_Master_Controller extends CI_Controller
 
         $this->load->library('upload', $config);
     }
-
 
     public function insert_user_data()
     {
@@ -46,8 +42,6 @@ class User_Master_Controller extends CI_Controller
             'error'    => $fileData['error'],
             'size'     => $fileData['size']
         ];
-
-
 
 
         $fieldsToValidate = [
@@ -81,6 +75,7 @@ class User_Master_Controller extends CI_Controller
         if (empty($_FILES['image']['name'])) {
 
             $this->form_validation->set_rules("image", "Image", 'required');
+
         }
 
 
@@ -88,21 +83,19 @@ class User_Master_Controller extends CI_Controller
 
         if ($this->form_validation->run()) {
 
-            // echo 'Validated';
-
-            
 
             if ($this->upload->do_upload('image')) {
 
                 $imageData = $this->upload->data(); // getting image all data 
                 $_POST['image'] = $imageData['file_name'];
+                
             } else {
                 $error = $this->upload->display_errors();
 
                 $error = json_encode(['error' => 'Ivalid image format']);
 
                 echo   json_encode(['error' => $error]);
-                die;
+                return;
             }
 
             $result = $this->user_master_model->user_insert_db($_POST);
@@ -110,14 +103,17 @@ class User_Master_Controller extends CI_Controller
             if ($result) {
 
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
+                return;
             } else {
 
                 echo json_encode(['statusCode' => 401, 'status' => 'fail']);
+                return;
             }
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -198,7 +194,7 @@ class User_Master_Controller extends CI_Controller
                     $error = ['error' => 'Invalid image format'];
 
                     echo   json_encode(['error' => $error]);
-                    die;
+                    return;
                 }
             }
 
@@ -208,19 +204,23 @@ class User_Master_Controller extends CI_Controller
 
             if ($result == 1) {
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
+                return;
             } else {
                 if ($result['duplicateEmail'] !== 0) {
                     $error = ['error' => 'Email is already in use'];
                     echo  json_encode(['error' => $error]);
+                    return;
                 } else {
                     $error = ['error' => 'Phone number is already in use'];
                     echo  json_encode(['error' => $error]);
+                    return;
                 }
             }
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -233,6 +233,8 @@ class User_Master_Controller extends CI_Controller
         $result = $this->user_master_model->user_master_table($_POST);
 
         echo $result;
+        return;
+
     }
 
     public function user_edit()
@@ -244,9 +246,11 @@ class User_Master_Controller extends CI_Controller
 
         if ($result !== null) {
             echo $result;
+            return;
         } else {
             $error = ['error' => 'Invalid id'];
             echo json_encode(['error' => $error]);
+            return;
         }
     }
 
@@ -259,9 +263,11 @@ class User_Master_Controller extends CI_Controller
 
         if($result !== 0){
             echo json_encode(['statusCode'=>200 , 'status'=>'success']);
+            return;
         }else{
             $error = ['error'=>'Invalid id'];
             echo json_encode(['statusCode'=>400 , 'status'=>$error]);
+            return;
         }
 
 

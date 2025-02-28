@@ -1,8 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
-Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 class Client_master_model extends CI_Model
 {
@@ -40,32 +37,30 @@ class Client_master_model extends CI_Model
 
     public function client_master_table($liveData)
     {
+        
+        $table_value = json_decode($this->table_data->table_controls($liveData));
 
-        $sortOn = $liveData['sortOn'];
-        $sortOrder = $liveData['sortOrder'];
-        $pageLimit = $liveData['pageLimit'];
-        $currentPage = $liveData['currentPage'];
 
         $liveDataArray = ['id' => $liveData['id'], 'NAME' => $liveData['NAME'], 'email' => $liveData['email'], 'phone' => $liveData['phone']];
 
-        $offset = ($currentPage - 1) * $pageLimit;
+        $offset = ($table_value->currentPage - 1) * $table_value->pageLimit;
 
         // for table records 
-        $result = $this->db->order_by($sortOn, $sortOrder);
+        $result = $this->db->order_by($table_value->sortOn, $table_value->sortOrder);
         $result = $this->db->select('id,NAME,email,phone,concat_ws(" , ", address , sm.state_name , dm.district_name) as address,pincode ')->from('client_master');
         $result = $this->db->like($liveDataArray);
         $result = $this->db->join('state_master sm', 'client_master.state = sm.state_id');
         $result = $this->db->join('district_master dm', 'client_master.district = dm.district_id');
-        $result = $this->db->get('', $pageLimit, $offset);
+        $result = $this->db->get('', $table_value->pageLimit, $offset);
 
 
         // Number of pages 
         $paginationDb = $this->db->from('client_master');
         $paginationDb = $this->db->like($liveDataArray);
         $paginationDb = $this->db->get();
-        $pages = ceil($paginationDb->num_rows() / $pageLimit);
+        $pages = ceil($paginationDb->num_rows() / $table_value->pageLimit);
 
-        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $currentPage]]);
+        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $table_value->currentPage]]);
     }
 
     public function client_master_edit($user_id)

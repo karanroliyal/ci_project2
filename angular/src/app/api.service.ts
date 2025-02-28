@@ -324,8 +324,6 @@ export class ApiService {
     }
 
 
-
-
     // number only function 
     numberOnly(event: any): boolean {
         const charCode = (event.which) ? event.which : event.keyCode;
@@ -334,8 +332,6 @@ export class ApiService {
         }
         return true;
     }
-
-
 
 
     //decimal number
@@ -352,5 +348,6 @@ export class ApiService {
         event.preventDefault();
         return false;
     }
+
 
 }

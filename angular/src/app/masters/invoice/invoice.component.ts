@@ -152,7 +152,7 @@ export class InvoiceComponent implements OnInit {
 
     // Ensure at least one item remains
     while (itemsFormArray.length > 1) {
-      itemsFormArray.removeAt(1); // Always remove the second item, keeping the first
+      itemsFormArray.removeAt(1);
     }
   }
 
@@ -274,7 +274,7 @@ export class InvoiceComponent implements OnInit {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value, this.getData.bind(this), 'invoice_id', 'invoice_master')
+    this.tableApi.deleteData(value, this.getData.bind(this), 'invoice_id', 'invoice_master' , 'Invoice_Master_Controller' , 'invoice_master_record_delete')
   }
 
   showError(error: any) {
@@ -317,6 +317,7 @@ export class InvoiceComponent implements OnInit {
     email : new FormControl('' , [Validators.required]),
     message : new FormControl('' , [Validators.required]),
     invoice_id : new FormControl('' , [Validators.required]),
+    subject : new FormControl('' , [Validators.required]),
 
   })
 
@@ -367,6 +368,7 @@ export class InvoiceComponent implements OnInit {
 
   }
 
+  btnDisable = false;
 
   sendMail(){
 
@@ -377,10 +379,30 @@ export class InvoiceComponent implements OnInit {
       const formData = new FormData();
 
       formData.append('data' , JSON.stringify(this.myMailForm.value));
+     
+      this.btnDisable = true;
 
-      this.tableApi.tableApi('EmailController' , 'mail_sender' , formData ).subscribe((res:any)=>{
 
-        console.log(res);
+      this.tableApi.tableApi('Email_Controller' , 'mail_sender' , formData ).subscribe((res:any)=>{
+
+        // console.log(res);
+
+        if(res.success == true){
+          Swal.fire({
+            title: 'Mail sended successfully',
+            icon: 'success',
+            draggable: false
+          })
+        }else{
+          Swal.fire({
+            title: 'Unable to send mail',
+            icon: 'error',
+            draggable: false
+          })
+        }
+
+
+        this.btnDisable = false;
 
       })
 
