@@ -10,6 +10,7 @@ class Invoice_Master_Controller extends CI_Controller
     {
         parent::__construct();
         $this->load->model('invoice_master_model');
+        $this->jwt_token->get_verified_token();
     }
 
 

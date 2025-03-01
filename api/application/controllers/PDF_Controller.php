@@ -9,6 +9,7 @@ class PDF_Controller extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->jwt_token->get_verified_token();
     }
 
     public function view_pdf()

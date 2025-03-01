@@ -15,6 +15,7 @@ class User_Master_Controller extends CI_Controller
         $config['encrypt_name'] = TRUE;
 
         $this->load->library('upload', $config);
+        $this->jwt_token->get_verified_token();
     }
 
     public function insert_user_data()

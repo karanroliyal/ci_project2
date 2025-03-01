@@ -4,6 +4,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Email_Controller extends CI_Controller
 {
 
+    public function __construct()
+    {
+        $this->jwt_token->get_verified_token();
+    }
+
     public function mail_sender()
     {
 

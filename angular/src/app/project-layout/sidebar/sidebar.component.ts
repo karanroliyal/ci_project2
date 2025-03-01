@@ -1,5 +1,17 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet , Router } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
+import { OnInit } from '@angular/core';
+import { ApiService } from '../../api.service';
+
+interface menuData {
+
+  priority: number,
+  menu_name: string,
+  route: string,
+  icon_class: string
+
+}
+
 
 @Component({
   selector: 'app-sidebar',
@@ -9,21 +21,15 @@ import { RouterLink, RouterLinkActive, RouterOutlet , Router } from '@angular/ro
       <div class="sidebar-wrapper  col-md-2 col-xl-2 col-sm-2">
         <div class="d-flex flex-column h-100">
           <div>
-            <a class="sidebar-btn" routerLink="/dash/dashboard" routerLinkActive="active-link" >
-              <i class="bi bi-grid"></i> Dashboard
-            </a>
-            <a class="sidebar-btn" routerLink="/dash/user-master" routerLinkActive="active-link">
-              <i class="bi bi-person"></i> User master
-            </a>
-            <a class="sidebar-btn" routerLink="/dash/client-master" routerLinkActive="active-link">
-              <i class="bi bi-people"></i> Client master
-            </a>
-            <a class="sidebar-btn" routerLink="/dash/item-master" routerLinkActive="active-link">
-              <i class="bi bi-bag-plus"></i> Item master
-            </a>
-            <a class="sidebar-btn" routerLink="/dash/invoice" routerLinkActive="active-link">
-              <i class="bi bi-journal-text"></i> Invoice
-            </a>
+
+            @for(menu of myMenu ; track $index){
+
+              <a class="sidebar-btn" routerLink={{menu.route}} routerLinkActive="active-link" >
+                <i class={{menu.icon_class}} ></i> {{menu.menu_name}}
+              </a>
+
+            }
+            
           </div>
 
           <a class="logout-btn-sidebar sidebar-btn bg-danger text-light"
@@ -97,15 +103,35 @@ height: calc(100vh - 45px);
   
   `,
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
 
   private router = inject(Router);
 
-  logout(){
+  private http = inject(ApiService);
+
+  logout() {
 
     this.router.navigate(['/login'])
-    localStorage.setItem('secure_token','');
+    localStorage.setItem('secure_token', '');
+    localStorage.setItem('auth_token', '');
 
   }
 
- }
+  myMenu : menuData[]  = [{menu_name:'' , priority: 1 , route : '' , icon_class: ''}] ;
+
+  // sidebar menu getter 
+  menuGet() {
+    this.http.tableApi('Menu', 'get_menu', '').subscribe((res: any) => {
+      if(res.statusCode == 200){
+        console.log(res.data);
+        this.myMenu = res.data;
+      }
+    })
+  }
+
+  ngOnInit(): void {
+    this.menuGet();
+  }
+
+
+}

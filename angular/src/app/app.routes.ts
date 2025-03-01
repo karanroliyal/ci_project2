@@ -54,9 +54,9 @@ export const routes: Routes = [
                 canActivate: [graurdSecureGuard]
             },
             {
-                path:'auto',
-                title:'Invoice master',
-                loadComponent:()=>import('./masters/autocomplete/autocomplete.component').then(m=>m.AutocompleteComponent),
+                path:'permission',
+                title:'Permission',
+                loadComponent:()=>import('./permission-comp/permission/permission.component').then(m=>m.PermissionComponent),
                 canActivate: [graurdSecureGuard]
             },
         ]

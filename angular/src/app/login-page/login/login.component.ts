@@ -47,11 +47,15 @@ export class LoginComponent {
             draggable: false
           })
           console.log(res.data);
-          let token = this.sercurity.encrypt(JSON.stringify(res.data));
+
+          console.log(res.Token)
+          let data_token = this.sercurity.encrypt(JSON.stringify(res.data));
+          let auth_token = res.Token;
 
           this.allDataUser = res.data;
 
-          localStorage.setItem('secure_token',token)
+          localStorage.setItem('secure_token',data_token)
+          localStorage.setItem('auth_token',auth_token)
 
         }
 
