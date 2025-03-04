@@ -18,15 +18,21 @@ class Login_Controller extends CI_Controller
         $loginDetails = $_POST;
         $result =  $this->login_model->check_login_db($loginDetails);
 
-        if($result->row() !== null){
+        if ($result->row() !== null) {
 
-            $jsonData = $result->row();    
+
+            $userId = $result->row()->id;
+
+            $menu = $this->login_model->menu_db($userId);
+
+            $jsonData = $result->row();
+
             $jwtToken = $this->jwt_token->generate_token($jsonData);
-            
-            echo json_encode(['statusCode'=>200 , 'status'=>'success' , 'data'=>$result->row() , 'Token' => $jwtToken]);
+
+            echo json_encode(['statusCode' => 200, 'status' => 'success', 'data' => $result->row(), 'Token' => $jwtToken , 'menu'=> $menu->result_array()]);
             return;
-        }else{
-            echo json_encode(['statusCode'=>400 , 'status'=>'fail']);
+        } else {
+            echo json_encode(['statusCode' => 400, 'status' => 'fail']);
             return;
         }
     }

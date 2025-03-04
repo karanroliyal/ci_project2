@@ -53,9 +53,13 @@ export class LoginComponent {
           let auth_token = res.Token;
 
           this.allDataUser = res.data;
+          const menuData = res.menu;
 
           localStorage.setItem('secure_token',data_token)
           localStorage.setItem('auth_token',auth_token)
+          localStorage.setItem('menu',JSON.stringify(menuData))
+          
+          
 
         }
 

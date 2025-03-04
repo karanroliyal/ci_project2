@@ -155,8 +155,8 @@
                             <td>{{items.phone}}</td>
                             <td>₹{{items.total_amount}}</td>
                             <td class="text-center">
-                                <a target="_blank"
-                                    href="http://localhost/ci_project2/api/PDF_Controller/view_pdf?myId={{items.invoice_id}}"><i
+                                <a target="_blank" href="http://localhost/ci_project2/api/PDF_Controller/view_pdf?myId={{items.invoice_id}}"
+                                    ><i
                                         class="bi text-danger bi-file-earmark-pdf-fill"></i></a>
                             </td>
                             <td class="text-center">
@@ -167,13 +167,19 @@
                             </td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-center">
-                                    <button #editBtn value={{items.invoice_id}}
-                                        (click)="result('result') ; editData(editBtn.value)"
-                                        class="btn btn-primary btn-sm rounded-circle"><i
-                                            class="bi bi-pencil-square"></i></button>
-                                    <button #deleteBtn value={{items.invoice_id}} (click)="deleteData(deleteBtn.value)"
-                                        class="btn btn-danger btn-sm rounded-circle"><i
-                                            class="bi bi-person-dash"></i></button>
+                                    @if(edit_permission){
+
+                                        <button #editBtn value={{items.invoice_id}}
+                                            (click)="result('result') ; editData(editBtn.value)"
+                                            class="btn btn-primary btn-sm rounded-circle"><i
+                                                class="bi bi-pencil-square"></i></button>
+                                    }
+                                    @if(delete_permission){
+
+                                        <button #deleteBtn value={{items.invoice_id}} (click)="deleteData(deleteBtn.value)"
+                                            class="btn btn-danger btn-sm rounded-circle"><i
+                                                class="bi bi-person-dash"></i></button>
+                                    }
                                 </div>
                             </td>
                         </tr>
@@ -353,14 +359,20 @@
                     <input type="hidden" formControlName="action">
 
                     <div class="d-flex gap-2 mt-2">
-                        <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == true }"
-                            class="btn btn-success btn-sm" type="button">
-                            Add invoice
-                        </button>
-                        <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == false }"
-                            class="btn btn-success btn-sm" type="button">
-                            Update invoice
-                        </button>
+                        @if(add_permission){
+
+                            <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == true }"
+                                class="btn btn-success btn-sm" type="button">
+                                Add invoice
+                            </button>
+                        }
+                        @if(edit_permission){
+
+                            <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == false }"
+                                class="btn btn-success btn-sm" type="button">
+                                Update invoice
+                            </button>
+                        }
                         <button class="btn btn-danger btn-sm" (click)="preserveField()">
                             reset
                         </button>

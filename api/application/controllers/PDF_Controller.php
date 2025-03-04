@@ -9,7 +9,6 @@ class PDF_Controller extends CI_Controller
     function __construct()
     {
         parent::__construct();
-        $this->jwt_token->get_verified_token();
     }
 
     public function view_pdf()
@@ -32,7 +31,7 @@ class PDF_Controller extends CI_Controller
     {
 
             $id['id'] = $_POST['mail'];
-            $html = $this->load->view('pdf', $id, true);
+            $html = $this->load->view('pdf', $id['id'] , true);
             $mpdf = new \Mpdf\Mpdf();
             $mpdf->showImageErrors = true;
             $mpdf->WriteHTML($html);

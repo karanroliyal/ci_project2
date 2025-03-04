@@ -60,7 +60,9 @@ class Client_master_model extends CI_Model
         $paginationDb = $this->db->get();
         $pages = ceil($paginationDb->num_rows() / $table_value->pageLimit);
 
-        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $table_value->currentPage]]);
+        $permission = $this->fx->check_permission_of_user();
+
+        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $table_value->currentPage ]  , 'permission'=>$permission  ]);
     }
 
     public function client_master_edit($user_id)

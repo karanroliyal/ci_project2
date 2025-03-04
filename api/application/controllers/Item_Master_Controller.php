@@ -213,6 +213,7 @@ class Item_Master_Controller extends CI_Controller
     public function item_edit()
     {
 
+
         $userId = $_POST['id'];
 
         $result =  $this->item_master_model->item_master_edit($userId);
@@ -229,6 +230,7 @@ class Item_Master_Controller extends CI_Controller
 
     public function item_delete()
     {
+
 
         $deleteUserId = $_POST['deleteid'];
 

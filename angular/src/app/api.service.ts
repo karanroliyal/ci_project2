@@ -27,8 +27,11 @@ export class ApiService {
 
     }
 
+    getApi(controllerName: string, methodName: string | null, formValue: any): any{
 
+        return this.http.get('http://localhost/ci_project2/api/' + controllerName + '/' + methodName, formValue)
 
+    }
     
     // Reset live form data 
     resetLiveForm(FormGroupName: FormGroup, dontReset: string[], tableFunction: Function) {
@@ -86,6 +89,13 @@ export class ApiService {
                                 icon: "error",
                             });
                         }
+                        if(res.statusCode == 403){
+                            Swal.fire({
+                                text: res.message,
+                                icon: 'error',
+                            })
+                            return;
+                        }
                         tableFunction();
                     }, (error: any) => {
                         swalWithBootstrapButtons.fire({
@@ -136,6 +146,13 @@ export class ApiService {
                             }
                             imageDiv = false;
                             delete res.image;
+                        }
+                        if(res.statusCode == 403){
+                            Swal.fire({
+                                text: res.message,
+                                icon: 'error',
+                            })
+                            return;
                         }
                         
                         if (res.password) {
@@ -255,6 +272,13 @@ export class ApiService {
         this.http.post(`http://localhost/ci_project2/api/${controllerName}/${methodMethod}`, formData).subscribe((res: any) => {
             if (res.error) {
                 showError(res.error);
+            }
+            if(res.statusCode == 403){
+                Swal.fire({
+                    text: res.message,
+                    icon: 'error',
+                })
+                return;
             }
             if (res.statusCode == 201) {
                 homeTab('search');

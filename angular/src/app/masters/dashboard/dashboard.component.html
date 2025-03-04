@@ -1,69 +1,40 @@
 <div class="row ">
 
-    <div class="col-md-3  col-md-3 col-sm-6 col-xs-6">
-        <a href="" class="text-dark link-tag-dash" routerLink="/dash/user-master">
-            <div class="px-3 bg-light rounded pt-2 pb-2 ">
-                <div class="row">
-                    <div class="col-9 my-auto">
-                        <h3>Users</h3>
-                        <p>{{user_count}}</p>
+    @for(menu of menuData ; track $index){
+
+        @if(menu.route !== '/dash/dashboard'){
+            <div class="col-md-3  col-md-3 col-sm-6 col-xs-6 mb-3">
+                <a href="" class="text-dark link-tag-dash" routerLink="{{menu.route}}">
+                    <div class="px-3 bg-light rounded pt-2 pb-2 ">
+                        <div class="row">
+                            <div class="col-9 my-auto">
+                                <h3>{{menu.menu_name}}</h3>
+                                
+                                @if(menu.route == '/dash/user-master' ){
+                                    <p>{{user_count}}</p>
+                                }
+                                @if(menu.route == '/dash/client-master'){
+                                    <p>{{client_count}}</p>
+                                }
+                                @if(menu.route == '/dash/item-master'){
+                                    <p>{{item_count}}</p>
+                                }
+                                @if(menu.route == '/dash/invoice'){
+                                    <p>{{total_invoice_amount}}</p>
+                                }
+                                
+                            </div>
+                            <div class="col-3 my-auto">
+                                <i class="fs-3 {{menu.icon_class}} px-2 pt-2 pb-2 bg-white text-center rounded"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-3 my-auto">
-                        <i class="fs-3 bi bi-person-fill px-2 pt-2 pb-2 bg-white text-center rounded"></i>
-                    </div>
-                </div>
+                </a>
             </div>
-        </a>
-    </div>
+        }
 
-    <div class="col-md-3 col-md-3 col-sm-6 col-xs-6">
-        <a href="" class="text-dark link-tag-dash" routerLink="/dash/client-master">
-        <div class="px-3 bg-light rounded pt-2 pb-2">
-            <div class="row">
-                <div class="col-9 my-auto">
-                    <h3>Clients</h3>
-                    <p>{{client_count}}</p>
-                </div>
-                <div class="col-3 my-auto">
-                    <i class="fs-3 bi bi-people-fill px-2 pt-2 pb-2 bg-white text-center rounded"></i>
-                </div>
-            </div>
-        </div>
-    </a>
-    </div>
+        
 
-    <div class="col-md-3 col-md-3 col-sm-6 col-xs-6">
-        <a href="" class="text-dark link-tag-dash" routerLink="/dash/item-master">
-        <div class="px-3 bg-light rounded pt-2 pb-2">
-            <div class="row">
-                <div class="col-9 my-auto">
-                    <h3>Items</h3>
-                    <p>{{item_count}}</p>
-                </div>
-                <div class="col-3 my-auto">
-                    <i class="fs-3 bi bi-bag-plus-fill px-2 pt-2 pb-2 bg-white text-center rounded"></i>
-                </div>
-            </div>
-        </div>
-        </a>
-    </div>
-
-    <div class="col-md-3 col-md-3 col-sm-6 col-xs-6">
-        <a href="" class="text-dark link-tag-dash" routerLink="/dash/invoice">
-        <div class="px-3 bg-light rounded pt-2 pb-2">
-            <div class="row">
-                <div class="col-9 my-auto">
-                    <h3>Total invoice</h3>
-                    <p>{{total_invoice_amount}}</p>
-                </div>
-                <div class="col-3 my-auto">
-                    <i class="fs-3 bi bi-journal-bookmark-fill px-2 pt-2 pb-2 bg-white text-center rounded"></i>
-                </div>
-            </div>
-        </div>
-        </a>
-    </div>
-
-
+    }
 
 </div>

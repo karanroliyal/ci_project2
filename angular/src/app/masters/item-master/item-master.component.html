@@ -26,7 +26,7 @@
                             <input type="text" formControlName="item_name" class="form-control form-control-sm"
                                 placeholder="Enter item name">
                         </div>
-                        
+
                         <div class="col-md-1 col-xl-1 col-sm-12 mt-4">
                             <button class="btn btn-danger btn-sm" (click)="resetLiveForm()">reset</button>
                         </div>
@@ -88,13 +88,17 @@
                                     src="http://localhost/ci_project2/api/items/{{items.image}}" /></td>
                             <td>
                                 <div class="d-flex gap-3 justify-content-center">
-                                    <button #editBtn value={{items.id}}
-                                        (click)="result('result') ; editData(editBtn.value)"
-                                        class="btn btn-primary btn-sm rounded-circle"><i
-                                            class="bi bi-pencil-square"></i></button>
-                                    <button #deleteBtn value={{items.id}} (click)="deleteData(deleteBtn.value)"
-                                        class="btn btn-danger btn-sm rounded-circle"><i
-                                            class="bi bi-person-dash"></i></button>
+                                    @if(edit_permission){
+                                        <button #editBtn value={{items.id}}
+                                            (click)="result('result') ; editData(editBtn.value)"
+                                            class="btn btn-primary btn-sm rounded-circle"><i
+                                                class="bi bi-pencil-square"></i></button>
+                                    }
+                                    @if(delete_permission){
+                                        <button #deleteBtn value={{items.id}} (click)="deleteData(deleteBtn.value)"
+                                            class="btn btn-danger btn-sm rounded-circle"><i
+                                                class="bi bi-person-dash"></i></button>
+                                    }
                                 </div>
                             </td>
                         </tr>
@@ -137,20 +141,24 @@
 
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
                         <label for="itemNameId" class="form-label">Item name <span class="text-danger">*</span></label>
-                        <input type="text" id="itemNameId" formControlName="item_name" class="form-control form-control-sm" maxlength="40"> 
-                        <app-form-validation [Form]="myDataForm" fieldName="item_name" [maxLength]="40" [minLength]="3" />
+                        <input type="text" id="itemNameId" formControlName="item_name"
+                            class="form-control form-control-sm" maxlength="40">
+                        <app-form-validation [Form]="myDataForm" fieldName="item_name" [maxLength]="40"
+                            [minLength]="3" />
                     </div>
 
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
-                        <label for="itemDescriptionId" class="form-label">Item description <span class="text-danger">*</span></label>
-                        <input type="text" id="itemDescriptionId" formControlName="item_description" class="form-control form-control-sm" maxlength="70">
-                        <app-form-validation [Form]="myDataForm" fieldName="item_description" [minLength]="3"  />
+                        <label for="itemDescriptionId" class="form-label">Item description <span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="itemDescriptionId" formControlName="item_description"
+                            class="form-control form-control-sm" maxlength="70">
+                        <app-form-validation [Form]="myDataForm" fieldName="item_description" [minLength]="3" />
                     </div>
 
                     <div class="col-md-4 col-xl-4 col-sm-6 col-xs-6 mb-3">
                         <label for="priceId" class="form-label">Item price <span class="text-danger">*</span></label>
                         <input type="text" id="priceId" formControlName="item_price"
-                            class="form-control form-control-sm text-end" (keypress)="decimalNumberOnly($event)"   >
+                            class="form-control form-control-sm text-end" (keypress)="decimalNumberOnly($event)">
                         <app-form-validation [Form]="myDataForm" fieldName="item_price" [maxLength]="15"
                             [minLength]="8" />
                     </div>
@@ -174,14 +182,18 @@
                     <input type="hidden" formControlName="action">
 
                     <div class="d-flex gap-2 mt-2">
-                        <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == true }"
-                            class="btn btn-success btn-sm" type="button">
-                            Add item
-                        </button>
-                        <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == false }"
-                            class="btn btn-success btn-sm" type="button">
-                            Update item
-                        </button>
+                        @if(add_permission){
+                            <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == true }"
+                                class="btn btn-success btn-sm" type="button">
+                                Add item
+                            </button>
+                        }
+                        @if(edit_permission){
+                            <button (click)="onSubmitData()" [ngClass]="{'d-none': updateBtn == false }"
+                                class="btn btn-success btn-sm" type="button">
+                                Update item
+                            </button>
+                        }
                         <button class="btn btn-danger btn-sm" (click)="preserveField()">
                             reset
                         </button>

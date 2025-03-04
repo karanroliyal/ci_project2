@@ -117,16 +117,11 @@ export class SidebarComponent implements OnInit {
 
   }
 
-  myMenu : menuData[]  = [{menu_name:'' , priority: 1 , route : '' , icon_class: ''}] ;
+  myMenu: menuData[] = [{ menu_name: '', priority: 1, route: '', icon_class: '' }];
 
-  // sidebar menu getter 
   menuGet() {
-    this.http.tableApi('Menu', 'get_menu', '').subscribe((res: any) => {
-      if(res.statusCode == 200){
-        console.log(res.data);
-        this.myMenu = res.data;
-      }
-    })
+    const data: any = localStorage.getItem('menu');
+    this.myMenu = JSON.parse(data);
   }
 
   ngOnInit(): void {

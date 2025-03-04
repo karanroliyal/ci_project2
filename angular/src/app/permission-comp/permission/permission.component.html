@@ -1,24 +1,26 @@
+<h3 class="mb-4 px-3">User permission</h3>
 
-<h3 class="mb-4 pl-2">User permission page</h3>
+<div class="row mx-0">
 
-<div class="row mx-0 ">
+    <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12 mt-">
 
-    <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12 mt-" >
-         
-        <select class="form-select"  #selectUserPermission (change)="openPermissionTable(selectUserPermission.value)">
-            <option selected  value="novalue" >-- Select user for permisssion --</option>
+        <select class="form-select" #selectUserPermission (change)="openPermissionTable(selectUserPermission.value)">
+            <option selected value="novalue">-- Select user for permisssion --</option>
             @for(user of userData ; track $index){
-                <option value={{user.id}} >{{user.name}}</option>
+            <option value={{user.id}}>{{user.name}}</option>
             }
         </select>
 
     </div>
 
-    <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12" >
+    <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12">
+        @if(show_permission_table && (add_permission || edit_permission)){
 
-        <button class="btn btn-primary btn-sm">
+        <button (click)="insert_permissions()" class="btn btn-primary btn-sm">
             Save
         </button>
+
+        }
 
     </div>
 
@@ -28,10 +30,46 @@
 
 @if(show_permission_table){
 
-    <table>
+<!-- {{user_permission_data}} -->
 
-        
 
-    </table>
+
+<form [formGroup]="User_permission">
+
+    <div formArrayName="permission_fields">
+
+        <table class="table mt-3 mx-2">
+
+            <thead>
+                <tr>
+                    <th>Menu</th>
+                    <th>Add {{add_permission}}</th>
+                    <th>Delete {{delete_permission}}</th>
+                    <th>Edit {{edit_permission}}</th>
+                    <th>View {{view_permission}}</th>
+                </tr>
+            </thead>
+
+            <tbody *ngFor="let item of permission_fields.controls ; let i = index" [formGroupName]="i">
+                <tr>
+                    <td>
+                        <input type="text" formControlName="menu_name" [readOnly]="true">
+                        <input type="hidden" formControlName="user_id" [readOnly]="true">
+                        <input type="hidden" formControlName="menu_id" [readOnly]="true">
+                    </td>
+                    <td><input type="checkbox" formControlName="add_p" ></td>
+                    <td><input type="checkbox" formControlName="delete_p"  ></td>
+                    <td><input type="checkbox" formControlName="update_p"  ></td>
+                    <td><input type="checkbox" formControlName="view_p" ></td>
+                </tr>
+            </tbody>
+
+        </table>
+
+
+    </div>
+
+</form>
+
 
 }

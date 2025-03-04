@@ -53,14 +53,26 @@ export class ItemMasterComponent {
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
+  edit_permission : boolean = true;
+  delete_permission : boolean = true;
+  view_permission : boolean = true;
+  add_permission : boolean = true;
+
   getData() {
 
     const formData = new FormData();
 
-    formData.append('data',JSON.stringify(this.myLiveForm.value));
+    formData.append('data', JSON.stringify(this.myLiveForm.value));
 
     this.tableApi.tableApi('Item_Master_Controller', 'item_table', formData).subscribe((res: any) => {
       this.data = res;
+
+      this.edit_permission = this.booleanReturn(res.permission.edit_permission);
+      this.delete_permission = this.booleanReturn(res.permission.delete_permission);
+      this.view_permission = this.booleanReturn(res.permission.view_permission);
+      this.add_permission = this.booleanReturn(res.permission.add_permission);
+
+
     }, (error: any) => {
       Swal.fire({
         title: 'Unable to connect with database',
@@ -69,6 +81,14 @@ export class ItemMasterComponent {
       });
       this.data.table = [];
     });
+  }
+
+  booleanReturn(val:number){
+    if(val == 0){
+      return false;
+    }else{
+      return true;
+    }
   }
 
 
@@ -118,7 +138,7 @@ export class ItemMasterComponent {
 
 
   insertData(action: string) {
-    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), this.file, this.preserveField.bind(this), action , 'insert_item_data','Item_Master_Controller','update_item_data')
+    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), this.file, this.preserveField.bind(this), action, 'insert_item_data', 'Item_Master_Controller', 'update_item_data')
   }
 
   // reset form fileds
@@ -169,7 +189,7 @@ export class ItemMasterComponent {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'item_master')
+    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'item_master', 'Item_Master_Controller', 'item_delete')
   }
 
   showError(error: any) {

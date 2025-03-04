@@ -1,11 +1,5 @@
 <?php
 
-// use SebastianBergmann\Environment\Console;
-
-defined('BASEPATH') or exit('No direct script access allowed');
-Header('Access-Control-Allow-Origin: * '); //for allow any domain, insecure
-header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Token');
-Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 
 class Dashboard_controller extends CI_Controller{
 

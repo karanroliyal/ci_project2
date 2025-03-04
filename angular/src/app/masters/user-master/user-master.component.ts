@@ -64,6 +64,11 @@ export class UserMasterComponent implements OnInit {
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
+  edit_permission : boolean = true;
+  delete_permission : boolean = true;
+  view_permission : boolean = true;
+  add_permission : boolean = true;
+
   getData() {
 
     const formData = new FormData();
@@ -72,6 +77,12 @@ export class UserMasterComponent implements OnInit {
 
     this.tableApi.tableApi('User_Master_Controller', 'User_table', formData).subscribe((res: any) => {
       this.data = res;
+
+      this.edit_permission = this.booleanReturn(res.permission.edit_permission);
+      this.delete_permission = this.booleanReturn(res.permission.delete_permission);
+      this.view_permission = this.booleanReturn(res.permission.view_permission);
+      this.add_permission = this.booleanReturn(res.permission.add_permission);
+
     }, (error: any) => {
           Swal.fire({
             title: 'Something went wrong',
@@ -80,6 +91,14 @@ export class UserMasterComponent implements OnInit {
           });
           this.data.table=[];
         });
+  }
+
+  booleanReturn(val:number){
+    if(val == 0){
+      return false;
+    }else{
+      return true;
+    }
   }
 
 
