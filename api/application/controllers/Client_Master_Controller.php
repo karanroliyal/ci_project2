@@ -75,7 +75,9 @@ class Client_Master_Controller extends CI_Controller{
             $result = $this->client_master_model->client_insert_db($_POST);
 
             if ($result) {
-
+                $inserted_id = $this->db->insert_id();
+                $_POST['id'] = $inserted_id;
+                $this->fx->user_log_creator('add' , $_POST , 'Client master' , $inserted_id);
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
                 return;
             } else {
@@ -161,6 +163,8 @@ class Client_Master_Controller extends CI_Controller{
 
 
             if ($result == 1) {
+                $_POST['id'] = $userId;
+                $this->fx->user_log_creator('update' , $_POST , 'Client master' , $userId);
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
             } else {
                 if ($result['duplicateEmail'] !== 0) {
@@ -236,11 +240,13 @@ class Client_Master_Controller extends CI_Controller{
             return;
         }
 
+
         $deleteUserId = $_POST['deleteid'];
 
-        $result =  $this->client_master_model->user_master_delete($deleteUserId);
+        $result =  $this->client_master_model->client_master_delete($deleteUserId);
 
         if($result !== 0){
+            $this->fx->user_log_creator('delete' , ['deleted id'=>$deleteUserId] , 'Client master' , $deleteUserId);
             echo json_encode(['statusCode'=>200 , 'status'=>'success']);
             return;
         }else{

@@ -107,7 +107,7 @@ class Invoice_master_model extends CI_Model
 
             }
 
-            return $result;
+            return ['result'=>$result , 'inserted_id'=>$invoiceMasterInsertedId];
             
         }
 

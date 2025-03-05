@@ -34,11 +34,7 @@ class User_Master_Controller extends CI_Controller
 
 
         // unseting all unrequired fileds
-        unset($_POST['table']);
-        unset($_POST['id']);
-        unset($_POST['action']);
-        unset($_POST['image']);
-        unset($_POST['uploadImage']);
+        $_POST = $this->unset_unwanted_data->unset_data($_POST);
 
 
         // getting image data into $Files
@@ -109,7 +105,9 @@ class User_Master_Controller extends CI_Controller
             $result = $this->user_master_model->user_insert_db($_POST);
 
             if ($result) {
-
+                $inserted_id = $this->db->insert_id();
+                $_POST['id'] = $inserted_id;
+                $this->fx->user_log_creator('add' , $_POST , 'User master' , $inserted_id);
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
                 return;
             } else {
@@ -144,11 +142,9 @@ class User_Master_Controller extends CI_Controller
         $userId =   $_POST['id'];
 
         // unseting all unrequired fileds
-        unset($_POST['table']);
-        unset($_POST['id']);
-        unset($_POST['action']);
-        unset($_POST['image']);
-        unset($_POST['uploadImage']);
+        $_POST = $this->unset_unwanted_data->unset_data($_POST);
+
+
         if (empty(trim($_POST['password']))) {
             unset($_POST['password']);
         }
@@ -215,9 +211,10 @@ class User_Master_Controller extends CI_Controller
 
             $result = $this->user_master_model->user_update_db($_POST, $userId);
 
-            // echo $result ; die;
 
             if ($result == 1) {
+                $_POST['id'] = $userId;
+                $this->fx->user_log_creator('update' , $_POST , 'User master' , $userId);
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
                 return;
             } else {
@@ -299,6 +296,7 @@ class User_Master_Controller extends CI_Controller
         $result =  $this->user_master_model->user_master_delete($deleteUserId);
 
         if($result !== 0){
+            $this->fx->user_log_creator('delete' , ['deleted id'=>$deleteUserId] , 'User master' , $deleteUserId );
             echo json_encode(['statusCode'=>200 , 'status'=>'success']);
             return;
         }else{

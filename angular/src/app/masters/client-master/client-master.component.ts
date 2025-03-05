@@ -198,7 +198,7 @@ export class ClientMasterComponent {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'client_master')
+    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'client_master' , 'Client_Master_Controller' , 'client_delete' )
   }
 
 

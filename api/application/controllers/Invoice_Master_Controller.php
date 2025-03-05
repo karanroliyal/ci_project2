@@ -145,8 +145,10 @@ class Invoice_Master_Controller extends CI_Controller
 
             $result =  $this->invoice_master_model->invoice_master_insert_data($itemDataForModel, $clinetDataForModel);
 
-            if($result){
-
+            if($result['result']){
+                $inserted_id = $result['inserted_id'];
+                $_POST['invoice_id'] = $inserted_id;
+                $this->fx->user_log_creator('add' , $_POST , 'Invoice master' , $inserted_id);
                 echo json_encode(['statusCode'=>201 , 'status'=>'success']);
                 return;
 
@@ -230,7 +232,8 @@ class Invoice_Master_Controller extends CI_Controller
             $result =  $this->invoice_master_model->invoice_master_update_data($itemDataForModel, $clinetDataForModel , $invoice_id);
 
             if($result){
-
+                $_POST['invoice_id'] = $invoice_id;
+                $this->fx->user_log_creator('update' , $_POST , 'Invoice master' , $invoice_id);
                 echo json_encode(['statusCode'=>201 , 'status'=>'success']);
                 return;
 
@@ -301,6 +304,7 @@ class Invoice_Master_Controller extends CI_Controller
         $result =  $this->invoice_master_model->delete_invoice($invoiceId);
 
         if($result !== 0){
+            $this->fx->user_log_creator('delete' , ['deleted id'=>$invoiceId] , 'Invoice master' , $invoiceId);
             echo json_encode(['statusCode'=>200 , 'status'=>'success']);
             return;
         }else{
