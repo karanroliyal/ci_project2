@@ -18,6 +18,13 @@ class Invoice_Master_Controller extends CI_Controller
     public function invoice_table()
     {
 
+        $permission = $this->fx->check_permission_of_user()['view_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to view any invoice");
+            return;
+        }
+
         $_POST = json_decode($this->input->post('data'), true);
 
 
@@ -30,6 +37,7 @@ class Invoice_Master_Controller extends CI_Controller
 
     public function client_autocomplete()
     {
+
 
         $searchString = $this->input->post();
 
@@ -55,6 +63,13 @@ class Invoice_Master_Controller extends CI_Controller
     public function invoice_edit()
     {
 
+        $permission = $this->fx->check_permission_of_user()['edit_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any invoice");
+            return;
+        }
+
         $invoiceId = $_POST['id'];
 
         $result =  $this->invoice_master_model->invoice_master_edit($invoiceId);
@@ -72,6 +87,13 @@ class Invoice_Master_Controller extends CI_Controller
 
     public function insert_invoice_data()
     {
+
+        $permission = $this->fx->check_permission_of_user()['add_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to add any invoice");
+            return;
+        }
 
         $wholePostData = json_decode($this->input->post('data'), true);
 
@@ -146,6 +168,13 @@ class Invoice_Master_Controller extends CI_Controller
 
     public function update_invoice_data()
     {
+
+        $permission = $this->fx->check_permission_of_user()['edit_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any invoice");
+            return;
+        }
 
         $wholePostData = json_decode($this->input->post('data'), true);
 
@@ -223,6 +252,13 @@ class Invoice_Master_Controller extends CI_Controller
 
     public function generate_invoice_number(){
 
+        $permission = $this->fx->check_permission_of_user()['add_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to add any invoice");
+            return;
+        }
+
         $result = $this->invoice_master_model->generate_last_invoice_number();
 
         echo json_encode($result);
@@ -232,6 +268,13 @@ class Invoice_Master_Controller extends CI_Controller
 
 
     public function invoice_mail_to_client(){
+
+        $permission = $this->fx->check_permission_of_user()['view_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to view any invoice");
+            return;
+        }
 
         $clientId = $_POST['client_id'];
 
@@ -243,6 +286,13 @@ class Invoice_Master_Controller extends CI_Controller
     }
 
     public function invoice_master_record_delete(){
+
+        $permission = $this->fx->check_permission_of_user()['delete_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to delete any invoice");
+            return;
+        }
 
         $invoiceId = $_POST['deleteid'];
 

@@ -44,9 +44,13 @@ class User_master_model extends CI_Model
 
         $offset = ($table_value->currentPage - 1) * $table_value->pageLimit;
 
+        $loginUserId = $this->jwt_token->get_verified_token()->id;
+
+
         // for table records 
         $result = $this->db->order_by($table_value->sortOn, $table_value->sortOrder);
         $result = $this->db->select('id,name,email,phone,image')->from('user_master');
+        $result = $this->db->where('id !=' , $loginUserId);
         $result = $this->db->like($liveDataArray);
         $result = $this->db->get('', $table_value->pageLimit, $offset);
 
@@ -77,7 +81,6 @@ class User_master_model extends CI_Model
         $this->db->where('id', $deleteUserId);
         $result =   $this->db->delete('user_master');
         $result =   $this->db->affected_rows();
-
 
         return $result;
 

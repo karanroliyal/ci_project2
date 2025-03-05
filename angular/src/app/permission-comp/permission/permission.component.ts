@@ -53,6 +53,21 @@ export class PermissionComponent {
   }
 
 
+  // reset form fileds
+  resetPermissions() {
+    const permissionArray = this.User_permission.get('permission_fields') as FormArray;
+  
+    permissionArray.controls.forEach((User_permission) => {
+      User_permission.patchValue({
+        add_p: false,
+        delete_p: false,
+        update_p: false,
+        view_p: false
+        // Do NOT include menu_name, user_id, or menu_id here
+      });
+    });
+  }
+
     
   booleanReturn(val:number){
     if(val == 0){
@@ -131,6 +146,7 @@ export class PermissionComponent {
 
   })
 
+  
   permission_fields = this.User_permission.get('permission_fields') as FormArray;
 
 

@@ -53,10 +53,10 @@ export class ItemMasterComponent {
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
-  edit_permission : boolean = true;
-  delete_permission : boolean = true;
-  view_permission : boolean = true;
-  add_permission : boolean = true;
+  edit_permission: boolean = true;
+  delete_permission: boolean = true;
+  view_permission: boolean = true;
+  add_permission: boolean = true;
 
   getData() {
 
@@ -65,12 +65,21 @@ export class ItemMasterComponent {
     formData.append('data', JSON.stringify(this.myLiveForm.value));
 
     this.tableApi.tableApi('Item_Master_Controller', 'item_table', formData).subscribe((res: any) => {
+      if (res.statusCode == 403) {
+        Swal.fire({
+          text: res.message,
+          icon: 'error',
+        })
+        this.data.table = [];
+        return;
+      }
       this.data = res;
 
       this.edit_permission = this.booleanReturn(res.permission.edit_permission);
       this.delete_permission = this.booleanReturn(res.permission.delete_permission);
       this.view_permission = this.booleanReturn(res.permission.view_permission);
       this.add_permission = this.booleanReturn(res.permission.add_permission);
+
 
 
     }, (error: any) => {
@@ -83,10 +92,10 @@ export class ItemMasterComponent {
     });
   }
 
-  booleanReturn(val:number){
-    if(val == 0){
+  booleanReturn(val: number) {
+    if (val == 0) {
       return false;
-    }else{
+    } else {
       return true;
     }
   }

@@ -6,6 +6,12 @@ class Item_master_model extends CI_Model
 
     public function item_insert_db($insertData)
     {
+        $permission = $this->fx->check_permission_of_user()['view_permission'];
+
+        if($permission == 0){
+            echo json_encode(['statusCode'=>403 , 'status'=>'Forbidden' , 'mesage'=>"You don't have permission to add any user"]);
+            return;
+        }
 
         return $this->db->insert('item_master', $insertData);
     }

@@ -15,6 +15,13 @@ class Client_Master_Controller extends CI_Controller{
     public function insert_client_data()
     {
 
+        $permission = $this->fx->check_permission_of_user()['add_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to add any client");
+            return;
+        }
+
         $_POST = json_decode($this->input->post('data'), true);
 
         // unseting all unrequired fileds
@@ -86,6 +93,13 @@ class Client_Master_Controller extends CI_Controller{
 
     public function update_client_data()
     {
+
+        $permission = $this->fx->check_permission_of_user()['edit_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any client");
+            return;
+        }
 
         $_POST = json_decode($this->input->post('data'), true);
 
@@ -170,6 +184,13 @@ class Client_Master_Controller extends CI_Controller{
     public function client_table()
     {
 
+        $permission = $this->fx->check_permission_of_user()['view_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to view any client");
+            return;
+        }
+
         $_POST = json_decode($this->input->post('data'), true);
 
 
@@ -183,6 +204,13 @@ class Client_Master_Controller extends CI_Controller{
 
     public function client_edit()
     {
+
+        $permission = $this->fx->check_permission_of_user()['edit_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any client");
+            return;
+        }
 
         $userId = $_POST['id'];
 
@@ -200,6 +228,13 @@ class Client_Master_Controller extends CI_Controller{
 
     public function client_delete()
     {
+
+        $permission = $this->fx->check_permission_of_user()['delete_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to delete any client");
+            return;
+        }
 
         $deleteUserId = $_POST['deleteid'];
 

@@ -14,9 +14,9 @@ import { OnInit } from '@angular/core';
         <div class="col-md-10 col-xl-10 col-sm-10 navigation-container">
           <i class="bi bi-list toggle-sidebar-btn sidebar-toggle-btn"></i>
           <div class="d-flex align-items-center gap-2">
-            <h6 class="user-name-navigation px-2">{{user_name}}</h6>
+            <h6 class="user-name-navigation px-2">{{user_name.toUpperCase()}}</h6>
             <img
-              class="user-profile-navigation"
+              class="user-profile-navigation bg-light"
               [src]="profile"
               alt=""
             />

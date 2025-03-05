@@ -23,25 +23,25 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-2 col-xl-2 col-sm-4 col-xs-4">
                             <label for="" class="form-label">Id</label>
-                            <input type="text" formControlName="id" (keypress)="numberOnly($event)" class="form-control form-control-sm"
+                            <input maxlength="10" type="text" formControlName="id" (keypress)="numberOnly($event)" class="form-control form-control-sm"
                                 placeholder="Enter your id">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-8 col-xs-8">
                             <label for="" class="form-label">Name</label>
-                            <input type="text" formControlName="name" class="form-control form-control-sm"
+                            <input type="text" maxlength="40" formControlName="name" class="form-control form-control-sm"
                                 placeholder="Enter your name">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-6 col-xs-6">
                             <label for="" class="form-label">Phone</label>
-                            <input type="text" formControlName="phone" (keypress)="numberOnly($event)" class="form-control form-control-sm"
+                            <input type="text" maxlength="10" formControlName="phone" (keypress)="numberOnly($event)" class="form-control form-control-sm"
                                 placeholder="Enter your phone">
                         </div>
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-6 col-xs-6">
                             <label for="" class="form-label">Email</label>
-                            <input type="text" formControlName="email" class="form-control form-control-sm"
+                            <input type="text" maxlength="40" formControlName="email" class="form-control form-control-sm"
                                 placeholder="Enter your email">
                         </div>
                         <div class="col-md-1 col-xl-1 col-sm-12 mt-4">
@@ -99,7 +99,11 @@
                         <tr>
                             <td>{{$index+1}}</td>
                             <td>{{items.id}}</td>
-                            <td (click)="result('result') ; editData(items.id)"><b>{{items.name}}</b></td>
+                            @if(edit_permission){
+                                <td (click)="result('result') ; editData(items.id)"><b>{{items.name}}</b></td>
+                            }@else {
+                                <td>{{items.name}}</td>
+                            }
                             <td>{{items.email}}</td>
                             <td>{{items.phone}}</td>
                             <td class="text-center"><img width="30px"

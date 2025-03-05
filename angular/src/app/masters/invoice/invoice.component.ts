@@ -60,17 +60,17 @@ export class InvoiceComponent implements OnInit {
     this.today_date();
   }
 
-  constructor(private tableApi: ApiService) {}
+  constructor(private tableApi: ApiService) { }
 
 
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
-  
-  edit_permission : boolean = true;
-  delete_permission : boolean = true;
-  view_permission : boolean = true;
-  add_permission : boolean = true;
+
+  edit_permission: boolean = true;
+  delete_permission: boolean = true;
+  view_permission: boolean = true;
+  add_permission: boolean = true;
 
   getData() {
 
@@ -79,6 +79,16 @@ export class InvoiceComponent implements OnInit {
     formData.append('data', JSON.stringify(this.myLiveForm.value))
 
     this.tableApi.tableApi('Invoice_Master_Controller', 'invoice_table', formData).subscribe((res: any) => {
+
+      if (res.statusCode == 403) {
+        Swal.fire({
+          text: res.message,
+          icon: 'error',
+        })
+        this.data.table = [];
+        return;
+      }
+
       this.data = res;
 
       this.edit_permission = this.booleanReturn(res.permission.edit_permission);
@@ -86,6 +96,8 @@ export class InvoiceComponent implements OnInit {
       console.log(this.delete_permission);
       this.view_permission = this.booleanReturn(res.permission.view_permission);
       this.add_permission = this.booleanReturn(res.permission.add_permission);
+
+
 
     }, (error: any) => {
 
@@ -99,10 +111,10 @@ export class InvoiceComponent implements OnInit {
     });
   }
 
-  booleanReturn(val:number){
-    if(val == 0){
+  booleanReturn(val: number) {
+    if (val == 0) {
       return false;
-    }else{
+    } else {
       return true;
     }
   }
@@ -295,7 +307,7 @@ export class InvoiceComponent implements OnInit {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value, this.getData.bind(this), 'invoice_id', 'invoice_master' , 'Invoice_Master_Controller' , 'invoice_master_record_delete')
+    this.tableApi.deleteData(value, this.getData.bind(this), 'invoice_id', 'invoice_master', 'Invoice_Master_Controller', 'invoice_master_record_delete')
   }
 
   showError(error: any) {
@@ -334,21 +346,21 @@ export class InvoiceComponent implements OnInit {
 
   myMailForm = new FormGroup({
 
-    name : new FormControl('' , [Validators.required]),
-    email : new FormControl('' , [Validators.required]),
-    message : new FormControl('' , [Validators.required]),
-    invoice_id : new FormControl('' , [Validators.required]),
-    subject : new FormControl('' , [Validators.required]),
+    name: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required]),
+    message: new FormControl('', [Validators.required]),
+    invoice_id: new FormControl('', [Validators.required]),
+    subject: new FormControl('', [Validators.required]),
 
   })
 
-  mailData(clientId: string , invoiceId: string) {
+  mailData(clientId: string, invoiceId: string) {
 
     const formData = new FormData();
 
     formData.append('client_id', clientId);
 
-    if(invoiceId == null){
+    if (invoiceId == null) {
 
       Swal.fire({
         title: 'Something went wrong',
@@ -365,6 +377,7 @@ export class InvoiceComponent implements OnInit {
       this.myMailForm.get('name')?.setValue(res.NAME)
       this.myMailForm.get('email')?.setValue(res.email)
       this.myMailForm.get('message')?.setValue('')
+      this.myMailForm.get('subject')?.setValue('')
       this.myMailForm.get('invoice_id')?.setValue(invoiceId)
       this.myMailForm.markAsUntouched();
 
@@ -378,11 +391,11 @@ export class InvoiceComponent implements OnInit {
 
     const mailId = new FormData();
 
-    mailId.append('mail' , invoiceId);
+    mailId.append('mail', invoiceId);
 
-    this.tableApi.tableApi('PDF_Controller' , 'mailPdf' , mailId ).subscribe((res:any)=>{
+    this.tableApi.tableApi('PDF_Controller', 'mailPdf', mailId).subscribe((res: any) => {
 
-      
+
 
     })
 
@@ -391,35 +404,43 @@ export class InvoiceComponent implements OnInit {
 
   btnDisable = false;
 
-  sendMail(){
+  sendMail() {
 
     this.myMailForm.markAllAsTouched();
 
-    if(this.myMailForm.valid){
+    if (this.myMailForm.valid) {
 
       const formData = new FormData();
 
-      formData.append('data' , JSON.stringify(this.myMailForm.value));
-     
+      formData.append('data', JSON.stringify(this.myMailForm.value));
+
       this.btnDisable = true;
 
 
-      this.tableApi.tableApi('Email_Controller' , 'mail_sender' , formData ).subscribe((res:any)=>{
+      this.tableApi.tableApi('Email_Controller', 'mail_sender', formData).subscribe((res: any) => {
 
         // console.log(res);
 
-        if(res.success == true){
+        if (res.success == true) {
           Swal.fire({
             title: 'Mail sended successfully',
             icon: 'success',
             draggable: false
           })
-        }else{
+        } else {
           Swal.fire({
             title: 'Unable to send mail',
             icon: 'error',
             draggable: false
           })
+        }
+
+        if (res.statusCode == 403) {
+          Swal.fire({
+            text: res.message,
+            icon: 'error',
+          })
+          return;
         }
 
 
@@ -464,12 +485,6 @@ export class InvoiceComponent implements OnInit {
 
       if (res.invoice_id) {
         this.myDataForm.get('invoice_number')?.setValue(('IN' + (Number(res.invoice_id) + 1).toString()));
-      } else {
-        Swal.fire({
-          title: 'Unable to generate Invoice number',
-          icon: "error",
-          draggable: false,
-        });
       }
 
     }, (error: any) => {

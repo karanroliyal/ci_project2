@@ -53,8 +53,8 @@ export class UserMasterComponent implements OnInit {
     this.activeTab = activeTab;
   }
 
-  numberOnly(event:any): boolean {
-   return this.tableApi.numberOnly(event);
+  numberOnly(event: any): boolean {
+    return this.tableApi.numberOnly(event);
 
   }
 
@@ -64,18 +64,26 @@ export class UserMasterComponent implements OnInit {
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
-  edit_permission : boolean = true;
-  delete_permission : boolean = true;
-  view_permission : boolean = true;
-  add_permission : boolean = true;
+  edit_permission: boolean = true;
+  delete_permission: boolean = true;
+  view_permission: boolean = true;
+  add_permission: boolean = true;
 
   getData() {
 
     const formData = new FormData();
 
-    formData.append('data' ,JSON.stringify(this.myLiveForm.value) );
+    formData.append('data', JSON.stringify(this.myLiveForm.value));
 
     this.tableApi.tableApi('User_Master_Controller', 'User_table', formData).subscribe((res: any) => {
+      if (res.statusCode == 403) {
+        Swal.fire({
+          text: res.message,
+          icon: 'error',
+        })
+        this.data.table = [];
+        return;
+      }
       this.data = res;
 
       this.edit_permission = this.booleanReturn(res.permission.edit_permission);
@@ -83,28 +91,30 @@ export class UserMasterComponent implements OnInit {
       this.view_permission = this.booleanReturn(res.permission.view_permission);
       this.add_permission = this.booleanReturn(res.permission.add_permission);
 
+
+
     }, (error: any) => {
-          Swal.fire({
-            title: 'Something went wrong',
-            icon: "error",
-            draggable: false,
-          });
-          this.data.table=[];
-        });
+      Swal.fire({
+        title: 'Something went wrong',
+        icon: "error",
+        draggable: false,
+      });
+      this.data.table = [];
+    });
   }
 
-  booleanReturn(val:number){
-    if(val == 0){
+  booleanReturn(val: number) {
+    if (val == 0) {
       return false;
-    }else{
+    } else {
       return true;
     }
   }
 
 
-  resetLiveForm(){
+  resetLiveForm() {
 
-    this.tableApi.resetLiveForm(this.myLiveForm , ['id','name','email','phone'] , this.getData.bind(this));
+    this.tableApi.resetLiveForm(this.myLiveForm, ['id', 'name', 'email', 'phone'], this.getData.bind(this));
 
   }
 
@@ -145,17 +155,17 @@ export class UserMasterComponent implements OnInit {
   Action = 'Added';
 
   onSubmitData() {
-    this.tableApi.onSubmitData(this.myDataForm,this.imageUrl , this.insertData.bind(this))
+    this.tableApi.onSubmitData(this.myDataForm, this.imageUrl, this.insertData.bind(this))
   }
 
 
-  insertData(action:string) {
-    this.tableApi.insertData(this.myDataForm,this.showError.bind(this),this.searchtab.bind(this),this.getData.bind(this),this.file,this.preserveField.bind(this),action ,'Insert_user_data','User_Master_Controller','Update_user_data');
+  insertData(action: string) {
+    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), this.file, this.preserveField.bind(this), action, 'Insert_user_data', 'User_Master_Controller', 'Update_user_data');
   }
 
   // reset form fileds
   preserveField() {
-    this.tableApi.preserveField(this.myDataForm , ['table' ,'id' ,'uploadImage' ,'action'] , this.clearImage.bind(this));
+    this.tableApi.preserveField(this.myDataForm, ['table', 'id', 'uploadImage', 'action'], this.clearImage.bind(this));
   }
 
 
@@ -164,7 +174,7 @@ export class UserMasterComponent implements OnInit {
   // Edit data functions
   async editData(value: any) {
     try {
-      const [updatedImageUrl, updatedUpdateBtn , updatedDiv] = await this.tableApi.editData(
+      const [updatedImageUrl, updatedUpdateBtn, updatedDiv] = await this.tableApi.editData(
         value,
         this.updateBtn,
         this.imageUrl,
@@ -177,12 +187,12 @@ export class UserMasterComponent implements OnInit {
         'User_Master_Controller',
         'user_edit'
       );
-  
+
       // Update the component properties with the returned values
       this.imageUrl = updatedImageUrl;
       this.updateBtn = updatedUpdateBtn;
       this.imageDiv = updatedDiv;
-  
+
       console.log('Updated imageUrl:', this.imageUrl);
       console.log('Updated updateBtn:', this.updateBtn);
       console.log('Updated updateImagediv:', this.imageDiv);
@@ -193,12 +203,12 @@ export class UserMasterComponent implements OnInit {
 
   // Delete data function 
   deleteData(value: string) {
-    this.tableApi.deleteData(value ,this.getData.bind(this) , 'id' , 'user_master' , 'User_Master_Controller', 'user_delete' )
+    this.tableApi.deleteData(value, this.getData.bind(this), 'id', 'user_master', 'User_Master_Controller', 'user_delete')
   }
 
   showError(error: any) {
 
-    this.tableApi.showError(error , this.myDataForm);
+    this.tableApi.showError(error, this.myDataForm);
 
 
   }

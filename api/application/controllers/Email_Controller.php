@@ -13,6 +13,14 @@ class Email_Controller extends CI_Controller
 
     public function mail_sender()
     {
+
+        $permission = $this->fx->check_permission_of_user()['view_permission'];
+
+        if($permission == 0){
+            echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to send main of invoice");
+            return;
+        }
+
         if (isset($_POST['data'])) {
             $_POST = json_decode($_POST['data'], true);
         }

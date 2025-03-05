@@ -1,11 +1,11 @@
 import { inject } from '@angular/core';
 import { CanMatchFn, Router } from '@angular/router';
 
-export const gaurdPagesGuard: CanMatchFn = (route, state) => {
+export const gaurdPagesGuard: CanMatchFn = (route , state) => {
 
   const router = inject(Router);
 
-  console.log(route, 'current route')
+  console.log(state, 'current route')
 
   let menuData: any = localStorage.getItem('menu');
 
@@ -18,7 +18,6 @@ export const gaurdPagesGuard: CanMatchFn = (route, state) => {
 
     let menu_route: any = ele.route;
     menu_route = menu_route.split("/").pop();
-
     menuArray.push(menu_route)
 
   })

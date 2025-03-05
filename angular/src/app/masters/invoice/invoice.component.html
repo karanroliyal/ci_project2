@@ -83,7 +83,7 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-8 col-xs-8">
                             <label for="" class="form-label">Invoice number</label>
-                            <input type="text" formControlName="invoice_number" class="form-control form-control-sm"
+                            <input maxlength="10" type="text" formControlName="invoice_number" class="form-control form-control-sm"
                                 placeholder="Enter item name">
                         </div>
 
@@ -147,8 +147,11 @@
                         <tr>
                             <td>{{$index+1}}</td>
                             <td>{{items.invoice_id}}</td>
-                            <td
-                            (click)="result('result') ; editData(items.invoice_id)"><b>{{items.invoice_number}}</b></td>
+                            @if(edit_permission){
+                                <td (click)="result('result') ; editData(items.invoice_id)"><b>{{items.invoice_number}}</b></td>
+                            }@else {
+                                <td>{{items.invoice_number}}</td>
+                            }
                             <td>{{items.invoice_date}}</td>
                             <td>{{items.NAME}}</td>
                             <td>{{items.email}}</td>

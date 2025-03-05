@@ -60,10 +60,10 @@ export class ClientMasterComponent {
   Total_pages = this.data.pagination.current_page_opened;
 
 
-  edit_permission : boolean = true;
-  delete_permission : boolean = true;
-  view_permission : boolean = true;
-  add_permission : boolean = true;
+  edit_permission: boolean = true;
+  delete_permission: boolean = true;
+  view_permission: boolean = true;
+  add_permission: boolean = true;
 
 
   getData() {
@@ -72,9 +72,19 @@ export class ClientMasterComponent {
     formData.append('data', JSON.stringify(this.myLiveForm.value));
 
     this.tableApi.tableApi('Client_Master_Controller', 'client_table', formData).subscribe((res: any) => {
+
+      if (res.statusCode == 403) {
+        Swal.fire({
+          text: res.message,
+          icon: 'error',
+        })
+        this.data.table = [];
+        return;
+      }
+
       this.data = res;
 
-      
+
       this.edit_permission = this.booleanReturn(res.permission.edit_permission);
       this.delete_permission = this.booleanReturn(res.permission.delete_permission);
       this.view_permission = this.booleanReturn(res.permission.view_permission);
@@ -87,16 +97,16 @@ export class ClientMasterComponent {
         icon: "error",
         draggable: false,
       });
-      this.data.table=[];
+      this.data.table = [];
     });
   }
 
 
-  
-  booleanReturn(val:number){
-    if(val == 0){
+
+  booleanReturn(val: number) {
+    if (val == 0) {
       return false;
-    }else{
+    } else {
       return true;
     }
   }
@@ -140,7 +150,7 @@ export class ClientMasterComponent {
 
 
   insertData(action: string) {
-    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), null, this.preserveField.bind(this), action,'insert_client_data','Client_Master_Controller','update_client_data');
+    this.tableApi.insertData(this.myDataForm, this.showError.bind(this), this.searchtab.bind(this), this.getData.bind(this), null, this.preserveField.bind(this), action, 'insert_client_data', 'Client_Master_Controller', 'update_client_data');
   }
 
 

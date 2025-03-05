@@ -23,7 +23,7 @@
                         <div (input)="this.myLiveForm.get('currentPage')?.setValue(1) ; getData()"
                             class="col-md-3 col-xl-3 col-sm-8 col-xs-8">
                             <label for="" class="form-label">Item name</label>
-                            <input type="text" formControlName="item_name" class="form-control form-control-sm"
+                            <input type="text" maxlength="40" formControlName="item_name" class="form-control form-control-sm"
                                 placeholder="Enter item name">
                         </div>
 
@@ -81,7 +81,11 @@
                         <tr>
                             <td>{{$index+1}}</td>
                             <td>{{items.id}}</td>
-                            <td (click)="result('result') ; editData(items.id)"><b>{{items.item_name}}</b></td>
+                            @if(edit_permission){
+                                <td (click)="result('result') ; editData(items.id)"><b>{{items.item_name}}</b></td>
+                            }@else {
+                                <td>{{items.item_name}}</td>
+                            }
                             <td>{{items.item_description}}</td>
                             <td>₹{{items.item_price}}</td>
                             <td class="text-center"><img width="30px"

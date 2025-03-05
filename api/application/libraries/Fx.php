@@ -8,7 +8,7 @@ class Fx
 
     public function __construct()
     {
-        // Get CodeIgniter instance
+        // get CodeIgniter instance
         $this->CI = &get_instance();
         // Load the JWT Library
         $this->CI->load->library('Jwt_token'); // Ensure the library file is named correctly
@@ -38,10 +38,6 @@ class Fx
         //    $result =  $this->CI->db->get('user_master')->row();
 
         $permissionDb = $this->CI->db->select('
-            m.menu_name ,
-            m.menu_priority , 
-            up.user_id , 
-            m.route,
             IFNULL(up.add_p , 0) as add_p , 
             IFNULL(up.delete_p , 0) as delete_p , 
             IFNULL(up.update_p , 0) as update_p, 
@@ -53,7 +49,7 @@ class Fx
         $permissionDb = $this->CI->db->join('user_permission up', 'm.id = up.menu_id');
         $permissionDb = $this->CI->db->where('up.user_id' , $user_id);
         $permissionDb = $this->CI->db->where('m.route' , $path_of_frontend);
-        $permissionDb =  $this->CI->db->get()->row();
+        $permissionDb = $this->CI->db->get()->row();
 
         return [
             'edit_permission'=>$permissionDb->update_p,
