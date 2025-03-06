@@ -29,7 +29,7 @@ export class LoginComponent {
   private animationItem: AnimationItem | undefined;
 
   options: AnimationOptions = {
-    path: '/assets/images/animate.json',
+    path: '/assets/images/login_image4.json',
     loop: true,
     autoplay: false
   };

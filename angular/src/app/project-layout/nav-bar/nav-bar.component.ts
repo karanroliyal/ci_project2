@@ -15,11 +15,14 @@ import { OnInit } from '@angular/core';
           <i class="bi bi-list toggle-sidebar-btn sidebar-toggle-btn"></i>
           <div class="d-flex align-items-center gap-2">
             <h6 class="user-name-navigation px-2">{{user_name.toUpperCase()}}</h6>
-            <img
+            
+        <img
               class="user-profile-navigation bg-light"
               [src]="profile"
               alt=""
-            />
+        />
+        
+            
           </div>
         </div>
   </div>
@@ -63,6 +66,8 @@ export class NavBarComponent implements OnInit {
 
   constructor(private security: EncryptionComponent) { }
 
+
+  
 
   user_name = '';
   profile = '';
