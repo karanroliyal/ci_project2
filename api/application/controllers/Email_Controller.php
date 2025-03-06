@@ -49,8 +49,8 @@ class Email_Controller extends CI_Controller
         $config['protocol'] = 'smtp';
         $config['smtp_host'] = 'smtp.gmail.com';
         $config['smtp_port'] = 587; // Port 587 is for STARTTLS
-        $config['smtp_user'] = 'karanroliyal12@gmail.com';
-        $config['smtp_pass'] = 'pzxs awnw pbgi szno'; // Replace with your Gmail App Password
+        $config['smtp_user'] = '';
+        $config['smtp_pass'] = ''; // Replace with your Gmail App Password
         $config['smtp_crypto'] = 'tls';  // Enable STARTTLS
         $config['charset'] = 'utf-8';
         $config['mailtype'] = 'html';

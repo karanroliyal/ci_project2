@@ -13,7 +13,9 @@ export class AppComponent {
   // menuArray = [{"menu_name":"login","route":"/login"}]
 
   constructor(){
-    // localStorage.setItem('menu' , JSON.stringify(this.menuArray));
+    localStorage.setItem('secure_token' , '');
+    localStorage.setItem('auth_token' , '');
+    localStorage.setItem('menu' , '');
   }
   
 }

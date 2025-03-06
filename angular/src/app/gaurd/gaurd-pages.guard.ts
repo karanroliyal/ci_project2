@@ -7,22 +7,29 @@ export const gaurdPagesGuard: CanMatchFn = (route , state) => {
 
   console.log(state, 'current route')
 
-  let menuData: any = localStorage.getItem('menu');
+  let matched = true;
 
+  if(localStorage.getItem('menu')){
 
-  let menu: [{ menu_name: string }] = JSON.parse(menuData);
+    let menuData: any = localStorage.getItem('menu');
+  
+  
+    let menu: [{ menu_name: string }] = JSON.parse(menuData);
+  
+    const menuArray: string[] = ['restricted','/dash/404'];
+  
+    menu.map((ele: any) => {
+  
+      let menu_route: any = ele.route;
+      menu_route = menu_route.split("/").pop();
+      menuArray.push(menu_route)
+  
+    })
+  
+    matched = menuArray.some((ele)=>ele === route.path);
 
-  const menuArray: string[] = ['restricted','/dash/404'];
+  }
 
-  menu.map((ele: any) => {
-
-    let menu_route: any = ele.route;
-    menu_route = menu_route.split("/").pop();
-    menuArray.push(menu_route)
-
-  })
-
-  let matched = menuArray.some((ele)=>ele === route.path);
 
   if(!matched){
     router.navigate(['/dash/restricted']);
