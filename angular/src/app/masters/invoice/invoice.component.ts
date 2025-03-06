@@ -63,6 +63,7 @@ export class InvoiceComponent implements OnInit {
   constructor(private tableApi: ApiService) { }
 
 
+
   opened_page = this.data.pagination.totalPages;
   Total_pages = this.data.pagination.current_page_opened;
 
@@ -71,6 +72,19 @@ export class InvoiceComponent implements OnInit {
   delete_permission: boolean = true;
   view_permission: boolean = true;
   add_permission: boolean = true;
+
+  getPermission() {
+
+    this.tableApi.tableApi('User_permission', 'user_permission', '').subscribe((res: any) => {
+
+      this.edit_permission = this.booleanReturn(res.permission.edit_permission);
+      this.delete_permission = this.booleanReturn(res.permission.delete_permission);
+      this.view_permission = this.booleanReturn(res.permission.view_permission);
+      this.add_permission = this.booleanReturn(res.permission.add_permission);
+
+    })
+
+  }
 
   getData() {
 
@@ -90,13 +104,6 @@ export class InvoiceComponent implements OnInit {
       }
 
       this.data = res;
-
-      this.edit_permission = this.booleanReturn(res.permission.edit_permission);
-      this.delete_permission = this.booleanReturn(res.permission.delete_permission);
-      console.log(this.delete_permission);
-      this.view_permission = this.booleanReturn(res.permission.view_permission);
-      this.add_permission = this.booleanReturn(res.permission.add_permission);
-
 
 
     }, (error: any) => {
@@ -500,6 +507,7 @@ export class InvoiceComponent implements OnInit {
 
     this.getData();
     this.generate_invoice_number();
+    this.getPermission();
 
   }
 

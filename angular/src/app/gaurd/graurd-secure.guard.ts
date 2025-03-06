@@ -6,21 +6,8 @@ export const graurdSecureGuard: CanActivateFn = (route, state) => {
 
   const router = inject(Router);
 
-  if(localStorage.getItem('menu')){
-
-
-    let menuArray: any = localStorage.getItem('menu');
-  
-    menuArray = JSON.parse(menuArray);
-  
-    
-    let checkMenuArray = menuArray.some((ele:any)=>ele.route === '/dash/dashboard');
-
-  }
-
-
-  let Token = localStorage.getItem('secure_token');
-  let Auth_Token = localStorage.getItem('auth_token');
+  let Token = localStorage.getItem('secure_token') ?? '';
+  let Auth_Token = localStorage.getItem('auth_token') ?? '';
 
   if(Token == '' || Auth_Token == ''){
     router.navigate(['/login']);

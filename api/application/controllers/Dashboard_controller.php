@@ -7,10 +7,7 @@ class Dashboard_controller extends CI_Controller{
     public function __construct()
     {
         parent::__construct();  
-
         $this->load->model('dashboard_model');
-        $this->jwt_token->get_verified_token();
-    
     }
 
     public function user_master_total_users(){

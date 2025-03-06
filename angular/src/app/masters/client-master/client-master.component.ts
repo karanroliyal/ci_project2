@@ -66,6 +66,19 @@ export class ClientMasterComponent {
   add_permission: boolean = true;
 
 
+  getPermission(){
+
+    this.tableApi.tableApi('User_permission' , 'user_permission' , '' ).subscribe((res:any)=>{
+
+      this.edit_permission = this.booleanReturn(res.permission.edit_permission);
+      this.delete_permission = this.booleanReturn(res.permission.delete_permission);
+      this.view_permission = this.booleanReturn(res.permission.view_permission);
+      this.add_permission = this.booleanReturn(res.permission.add_permission);
+
+    })
+
+  }
+
   getData() {
     const formData = new FormData();
 
@@ -83,12 +96,6 @@ export class ClientMasterComponent {
       }
 
       this.data = res;
-
-
-      this.edit_permission = this.booleanReturn(res.permission.edit_permission);
-      this.delete_permission = this.booleanReturn(res.permission.delete_permission);
-      this.view_permission = this.booleanReturn(res.permission.view_permission);
-      this.add_permission = this.booleanReturn(res.permission.add_permission);
 
 
     }, (error: any) => {
@@ -282,7 +289,8 @@ export class ClientMasterComponent {
 
   ngOnInit(): void {
     this.getData();
-    this.state()
+    this.state();
+    this.getPermission();
     // console.log('total Page ', this.data.table);
   }
 

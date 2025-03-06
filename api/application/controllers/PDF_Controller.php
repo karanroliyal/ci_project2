@@ -13,7 +13,7 @@ class PDF_Controller extends CI_Controller
 
     public function view_pdf()
     {
-
+        print_r($_GET);die;
         if(isset($_GET)){
             $id['id'] = $_GET['myId'];
             $html = $this->load->view('pdf', $id, true);

@@ -8,16 +8,13 @@ class Client_Master_Controller extends CI_Controller{
     {
         parent::__construct();
         $this->load->model('client_master_model');
-        $this->jwt_token->get_verified_token();
     }
 
 
     public function insert_client_data()
     {
 
-        $permission = $this->fx->check_permission_of_user()['add_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('add_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to add any client");
             return;
         }
@@ -96,9 +93,7 @@ class Client_Master_Controller extends CI_Controller{
     public function update_client_data()
     {
 
-        $permission = $this->fx->check_permission_of_user()['edit_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('update_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any client");
             return;
         }
@@ -188,9 +183,7 @@ class Client_Master_Controller extends CI_Controller{
     public function client_table()
     {
 
-        $permission = $this->fx->check_permission_of_user()['view_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('view_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to view any client");
             return;
         }
@@ -209,9 +202,7 @@ class Client_Master_Controller extends CI_Controller{
     public function client_edit()
     {
 
-        $permission = $this->fx->check_permission_of_user()['edit_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('update_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any client");
             return;
         }
@@ -233,9 +224,7 @@ class Client_Master_Controller extends CI_Controller{
     public function client_delete()
     {
 
-        $permission = $this->fx->check_permission_of_user()['delete_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('delete_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to delete any client");
             return;
         }

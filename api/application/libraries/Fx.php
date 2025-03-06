@@ -8,10 +8,12 @@ class Fx
 
     public function __construct()
     {
-        // get CodeIgniter instance
         $this->CI = &get_instance();
-        // Load the JWT Library
-        $this->CI->load->library('Jwt_token'); // Ensure the library file is named correctly
+        $this->CI->load->library('Jwt_token');
+        if($this->CI->uri->segment(2) !== 'login_check'){
+            $this->CI->jwt_token->get_verified_token();
+            $this->api_log_creator($_POST , current_url()  );
+        };
     }
 
     public function api_response($statusCode, $status, $data, $message)
@@ -28,7 +30,7 @@ class Fx
     }
 
     // check permission for login user
-    public function check_permission_of_user()
+    public function check_permission_of_user($default="")
     {
         $path_of_frontend = $this->CI->input->get_request_header('myurl');
 
@@ -51,18 +53,24 @@ class Fx
         $permissionDb = $this->CI->db->where('m.route', $path_of_frontend);
         $permissionDb = $this->CI->db->get()->row();
 
-        return [
-            'edit_permission' => $permissionDb->update_p,
-            'delete_permission' => $permissionDb->delete_p,
-            'view_permission' => $permissionDb->view_p,
-            'add_permission' => $permissionDb->add_p,
-        ];
+        if($default == ''){
+            return [
+                'edit_permission' => $permissionDb->update_p,
+                'delete_permission' => $permissionDb->delete_p,
+                'view_permission' => $permissionDb->view_p,
+                'add_permission' => $permissionDb->add_p,
+            ];
+        }else{
+
+            return $default = $permissionDb->$default;
+
+        }
+
     }
 
     // user log function
     public function user_log_creator($action, $data , $action_table , $action_id )
     {
-
         $path_of_frontend = $this->CI->input->get_request_header('myurl');
         $user_data = $this->CI->jwt_token->get_verified_token();
 
@@ -77,11 +85,12 @@ class Fx
             $message = "$user_name (id : $user_id) updated id ($action_id) on $action_table table";
         } else if ($action == 'delete') {
             $message = "$user_name (id : $user_id) deleted id ($action_id) on $action_table table";
+        }else if($action == 'call'){
+            $message = "$user_name (id : $user_id) called this api : {$_SERVER['PHP_SELF']} on $action_table table";
         }
 
-        // $path = "/dash/user-master";
-        $lastSegment = basename($path_of_frontend); // Extracts 'user-master'
-        $menu_name = str_replace("-", " ", $lastSegment); // Replaces '-' with ' '
+        $lastSegment = basename($path_of_frontend); 
+        $menu_name = str_replace("-", " ", $lastSegment); 
 
 
         $insert_data = [
@@ -94,5 +103,26 @@ class Fx
         ];
 
         $this->CI->db->insert('user_log', $insert_data);
+
     }
+
+    // api log function
+    public function api_log_creator($data , $api){
+
+        $user_data = $this->CI->jwt_token->get_verified_token();
+
+        $insert_data = [
+
+            'user_id'=>$user_data->id,
+            'user_name'=>$user_data->name,
+            'data'=>json_encode($data),
+            'api'=> $api
+
+        ];
+
+        $this->CI->db->insert('api_log' , $insert_data);
+
+    }
+
+
 }

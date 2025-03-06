@@ -9,21 +9,18 @@ class User_Master_Controller extends CI_Controller
     {
         parent::__construct();
         $this->load->model('user_master_model');
-        // Uploading image here 
+        // Image uplaod configration
         $config['upload_path'] = './profiles';
         $config['allowed_types'] = 'jpg|png|gif|jpeg';
         $config['encrypt_name'] = TRUE;
 
         $this->load->library('upload', $config);
-        $this->jwt_token->get_verified_token();
     }
 
     public function insert_user_data()
     {
 
-        $permission = $this->fx->check_permission_of_user()['add_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('add_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to add any user");
             return;
         }
@@ -105,30 +102,32 @@ class User_Master_Controller extends CI_Controller
             $result = $this->user_master_model->user_insert_db($_POST);
 
             if ($result) {
+
                 $inserted_id = $this->db->insert_id();
                 $_POST['id'] = $inserted_id;
                 $this->fx->user_log_creator('add' , $_POST , 'User master' , $inserted_id);
+
                 echo json_encode(['statusCode' => 201, 'status' => 'success']);
                 return;
-            } else {
 
+            } else {
                 echo json_encode(['statusCode' => 401, 'status' => 'fail']);
                 return;
             }
+
         } else {
 
             $error = $this->form_validation->error_array();
             echo json_encode(['error' => $error]);
             return;
+            
         }
     }
 
     public function update_user_data()
     {
 
-        $permission = $this->fx->check_permission_of_user()['edit_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('update_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any user");
             return;
         }
@@ -239,9 +238,7 @@ class User_Master_Controller extends CI_Controller
     public function user_table()
     {
 
-        $permission = $this->fx->check_permission_of_user()['view_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('view_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to view user table");
             return;
         }
@@ -259,10 +256,7 @@ class User_Master_Controller extends CI_Controller
     public function user_edit()
     {
 
-        $permission = $this->fx->check_permission_of_user()['edit_permission'];
-
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('update_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to edit any user");
             return;
         }
@@ -284,9 +278,7 @@ class User_Master_Controller extends CI_Controller
     public function user_delete()
     {
 
-        $permission = $this->fx->check_permission_of_user()['delete_permission'];
-
-        if($permission == 0){
+        if($this->fx->check_permission_of_user('delete_p') == 0){
             echo $this->fx->api_response(403 , 'Forbidden' , '' , "You don't have permission to delete any user");
             return;
         }
@@ -308,5 +300,6 @@ class User_Master_Controller extends CI_Controller
 
     }
 
+    
 
 }

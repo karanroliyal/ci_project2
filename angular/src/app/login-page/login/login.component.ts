@@ -6,9 +6,12 @@ import { ApiService } from '../../api.service';
 import Swal from 'sweetalert2';
 import { Router, RouterModule } from '@angular/router';
 import { EncryptionComponent } from '../encryption/encryption.component';
+import { AnimationItem } from 'lottie-web';
+import { AnimationOptions, LottieComponent } from 'ngx-lottie';
+
 
 @Component({
-  imports: [ReactiveFormsModule, ValidationModule, FormValidationComponent, RouterModule],
+  imports: [ReactiveFormsModule, ValidationModule, FormValidationComponent, RouterModule, LottieComponent ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -17,13 +20,39 @@ import { EncryptionComponent } from '../encryption/encryption.component';
 export class LoginComponent {
 
 
-  constructor(private http: ApiService, private router: Router , private sercurity: EncryptionComponent) { }
+  constructor(private http: ApiService, private router: Router, private sercurity: EncryptionComponent) {
+    localStorage.setItem('menu' , '');
+  localStorage.setItem('secure_token' , '');
+  localStorage.setItem('auth_token' , '');
+   }
+
+  private animationItem: AnimationItem | undefined;
+
+  options: AnimationOptions = {
+    path: '/assets/images/animate.json',
+    loop: true,
+    autoplay: false
+  };
+
+  animationCreated(animationItem: AnimationItem): void {
+    this.animationItem = animationItem;
+    this.play();
+  }
+
+
+  play(): void {
+    if (this.animationItem) {
+      this.animationItem.play();
+    }
+  }
+
+
+  
 
   loginForm = new FormGroup({
     Email: new FormControl('', [Validators.required]),
     Password: new FormControl('', [Validators.required])
   })
-
 
   allDataUser: any = '';
 
@@ -55,15 +84,15 @@ export class LoginComponent {
           this.allDataUser = res.data;
           const menuData = res.menu;
 
-          localStorage.setItem('secure_token',data_token)
-          localStorage.setItem('auth_token',auth_token)
-          localStorage.setItem('menu',JSON.stringify(menuData))
-          
-          
+          localStorage.setItem('secure_token', data_token)
+          localStorage.setItem('auth_token', auth_token)
+          localStorage.setItem('menu', JSON.stringify(menuData))
+
+
 
         }
 
-        
+
         else {
           Swal.fire({
             title: 'Incorrect credentials',
@@ -77,5 +106,10 @@ export class LoginComponent {
     }
 
   }
+
+
+
+
+
 
 }

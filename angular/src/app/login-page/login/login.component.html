@@ -29,8 +29,12 @@
 
     <div class="col-md-6 col-xl-6 col-sm-12 col-xs-12">
 
-        <img width="100%" src="../assets/images/login.png" alt="">
-
+        <!-- <img width="100%" src="../assets/images/login.png" alt=""> -->
+        <ng-lottie 
+        [options]="options" 
+        width="100%" 
+        height="auto" 
+        (animationCreated)="animationCreated($event)"/>
 
     </div>
 

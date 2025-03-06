@@ -7,9 +7,7 @@ class Menu extends CI_Controller{
     public function __construct(){
 
         parent::__construct();
-        $this->jwt_token->get_verified_token();
         $this->load->model('Menu_db');
-
     }
 
     public function get_menu(){

@@ -9,7 +9,6 @@ class User_permission extends CI_Controller
     {
 
         parent::__construct();
-        $this->jwt_token->get_verified_token();
         $this->load->model('user_permission_db');
     }
 
@@ -76,5 +75,10 @@ class User_permission extends CI_Controller
 
     }
 
+    public function user_permission(){
+
+        echo json_encode(['permission'=>$this->fx->check_permission_of_user()]);
+
+    }
 
 }

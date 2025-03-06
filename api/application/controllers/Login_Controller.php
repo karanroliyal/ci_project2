@@ -9,7 +9,6 @@ class Login_Controller extends CI_Controller
     {
         parent::__construct();
         $this->load->model('login_model');
-        // $this
     }
 
     public function login_check()

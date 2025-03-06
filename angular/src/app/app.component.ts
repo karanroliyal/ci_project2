@@ -11,11 +11,7 @@ export class AppComponent {
   title = 'project-cms';
 
   // menuArray = [{"menu_name":"login","route":"/login"}]
-
   constructor(){
-    localStorage.setItem('secure_token' , '');
-    localStorage.setItem('auth_token' , '');
-    localStorage.setItem('menu' , '');
   }
   
 }

@@ -58,11 +58,7 @@ class Item_master_model extends CI_Model
         $pages = ceil($paginationDb->num_rows() / $table_value->pageLimit);
 
 
-
-
-        $permission = $this->fx->check_permission_of_user();
-
-        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $table_value->currentPage]  , 'permission'=>$permission ]);
+        return json_encode(['table' => $result->result_array(), 'pagination' => ['totalPages' => $pages, 'current_page_opened' => $table_value->currentPage]  ]);
     }
 
     public function item_master_edit($user_id)
